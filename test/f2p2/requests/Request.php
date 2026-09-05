@@ -1,41 +1,104 @@
 <?php
+
     namespace F2P2;
 
 
     /**
-     * The class that represent a network request
-     * 
-     * @link      link
-     * @since     Version 0.0
-     * @author    Thomas Baricault <thomas.baricault@gmail.com>
-     * @copyright Copyright (c) 2024, Thomas Baricault
-     * @license   https://opensource.org/license/bsd-2-clause
+     * HTTP request
      */
     class Request
     {
-        private ?string $error            = null;
-        private ?string $url              = null;
-        private string  $method           = 'GET';
-        private array   $headers          = [];
-        private int     $port             = 80;
-        private array   $args             = [];
-        private array   $files            = [];
-        private ?int    $timeout          = null;
-        private ?int    $transferMinSpeed = null;
-        private ?int    $transferMinTime  = null;
-        private ?int    $transferResume   = null;
-        private ?int    $downloadMaxSize  = null;
-        private ?int    $downloadMaxSpeed = null;
-        private ?string $downloadPath     = null;
-        private ?int    $uploadSize       = null;
-        private ?int    $uploadMaxSpeed   = null;
-        private ?string $uploadPath       = null;
+
+        /**
+         * Request error
+         */
+        private ?string $error = null;
+
+        /**
+         * Request url
+         */
+        private ?string $url = null;
+
+        /**
+         * Request method
+         */
+        private string $method = 'GET';
+
+        /**
+         * HTTP headers
+         */
+        private array $headers = [];
+
+        /**
+         * Request port
+         */
+        private int $port = 80;
+
+        /**
+         * GET or POST arguments
+         */
+        private array $args = [];
+
+        /**
+         * Files
+         */
+        private array $files = [];
+
+        /**
+         * Request timeout
+         */
+        private ?int $timeout = null;
+
+        /**
+         * Transfer minimum speed
+         */
+        private ?int $transferMinSpeed = null;
+
+        /**
+         * Transfer speed verification time
+         */
+        private ?int $transferMinTime = null;
+
+        /**
+         * Transfer resume position
+         */
+        private ?int $transferResume = null;
+
+        /**
+         * Download max size
+         */
+        private ?int $downloadMaxSize = null;
+
+        /**
+         * Download max speed
+         */
+        private ?int $downloadMaxSpeed = null;
+
+        /**
+         * Download destination path
+         */
+        private ?string $downloadPath = null;
+
+        /**
+         * Upload size
+         */
+        private ?int $uploadSize = null;
+
+        /**
+         * Upload max speed
+         */
+        private ?int $uploadMaxSpeed = null;
+
+        /**
+         * Upload file path
+         */
+        private ?string $uploadPath = null;
 
 
         /**
-         * Initialize a request from the actual session
+         * Constructs a request from the actual session
          * 
-         * @return Request The request
+         * @return Request Resulting request
          */
         static public function fromCurrent() : Request
         {
@@ -44,455 +107,446 @@
                 ->setMethod(\F2P2\Server::getRequestMethod())
                 ->setPort(\F2P2\Server::getServerPort())
                 ->setHeaders(getallheaders())
-                ->setArguments(\F2P2\Server::getRequestMethod() === 'GET' ? $_GET : (\F2P2\Server::getRequestMethod() === 'POST' ? $_POST : []));
+                ->setArguments(
+                    \F2P2\Server::getRequestMethod() === 'GET'
+                        ? $_GET
+                        : (
+                            \F2P2\Server::getRequestMethod() === 'POST'
+                                ? $_POST
+                                : []
+                        )
+                );
             foreach ($_FILES as $name => $file)
-            {
-                $request->addFile($file['tmp_name'], $file['type'], $name);
-            }
-            return $request;
+                $request->addFile($file['tmp_name'], null, $file['type'], $name);
+            return ($request);
         }
 
         /**
          * Returns the error generated when the request was sent
          * 
-         * @return string The error if there is one, otherwise null
+         * @return string Error if there is one, `null` otherwise
          */
         public function getError() : ?string
         {
-            return $this->error;
+            return ($this->error);
         }
 
         /**
          * Returns the request URL
          * 
-         * @return string The URL
+         * @return string Request url
          */
         public function getURL() : ?string
         {
-            return $this->url;
-        }
-
-        /**
-         * Defines the request URL
-         * 
-         * @param  string  $url The URL
-         * @return Request      The request
-         */
-        public function setURL(
-            string $url
-        ) : Request
-        {
-            $this->url = $url;
-            return $this;
+            return ($this->url);
         }
 
         /**
          * Returns the request method
          * 
-         * @return string The method
+         * @return string Request method
          */
         public function getMethod() : string
         {
-            return $this->method;
-        }
-
-        /**
-         * Defines the request method
-         * 
-         * @param  string  $method The method
-         * @return Request         The request
-         */
-        public function setMethod(
-            string $method
-        ) : Request
-        {
-            $this->method = $method;
-            return $this;
+            return ($this->method);
         }
 
         /**
          * Returns the request port
          * 
-         * @return string The port
+         * @return int Request port
          */
         public function getPort() : int
         {
-            return $this->port;
-        }
-
-        /**
-         * Defines the request port
-         * 
-         * @param  string  $url The URL
-         * @return Request      The request
-         */
-        public function setPort(
-            int $port
-        ) : Request
-        {
-            $this->port = $port;
-            return $this;
+            return ($this->port);
         }
 
         /**
          * Returns the request headers
          * 
-         * @return array The headers (name => value)
+         * @return array Request headers (name => value)
          */
         public function getHeaders() : array
         {
-            return $this->headers;
+            return ($this->headers);
         }
 
         /**
-         * Returns a request header
+         * Returns an header of the request
          * 
-         * @param  string  $name The header name
-         * @return ?string       The header value if exists, otherwise null
-         */
-        public function getHeader(
-            string $name
-        ) : ?string
-        {
-            return array_key_exists($name, $this->headers) ? $this->headers[$name] : null;
-        }
-
-        /**
-         * Defines the request headers
+         * @param string $name Header name
          * 
-         * @param  array   $headers The headers (name => value)
-         * @return Request          The request
+         * @return ?string Header value if exists, `null` otherwise
          */
-        public function setHeaders(
-            array $headers
-        ) : Request
+        public function getHeader(string $name) : ?string
         {
-            foreach ($headers as $name => $value)
-            {
-                $this->addHeader($name, $value);
-            }
-            return $this;
-        }
-
-        /**
-         * Add a header to the request
-         * 
-         * @param  string       $name  The header name
-         * @param  string|array $value The header value
-         * @return Request             The request
-         */
-        public function addHeader(
-            string       $name,
-            string|array $value
-        ) : Request
-        {
-            $this->headers[$name] = is_array($value) ? implode('; ', $value) : $value;
-            return $this;
-        }
-
-        /**
-         * Returns all the request data
-         * 
-         * @return array The data
-         */
-        public function getData() : array
-        {
-            return array_merge($this->args, $this->files);
+            return (
+                array_key_exists($name, $this->headers)
+                    ? $this->headers[$name]
+                    : null
+            );
         }
 
         /**
          * Returns the request arguments
          * 
-         * @return array The arguments
+         * @return array Request arguments
          */
         public function getArguments() : array
         {
-            return $this->args;
+            return ($this->args);
         }
 
         /**
          * Returns a request argument
          * 
-         * @param  string  $name The argument name
-         * @return ?string       The argument value if exists, otherwise null
-         */
-        public function getArgument(
-            string $name
-        ) : ?string
-        {
-            return array_key_exists($name, $this->args) ? $this->args[$name] : null;
-        }
-
-        /**
-         * Defines the GET or POST arguments of the request
+         * @param string $name Argument name
          * 
-         * @param  array   $args The arguments (name => value)
-         * @return Request       The request
+         * @return ?string Argument value if exists, `null` otherwise
          */
-        public function setArguments(
-            array $args
-        ) : Request
+        public function getArgument(string $name) : ?string
         {
-            foreach ($args as $name => $value)
-            {
-                $this->addArgument($name, $value);
-            }
-            return $this;
-        }
-
-        /**
-         * Add a GET or POST argument to the request
-         * 
-         * @param  string  $name  The argument name
-         * @param  string  $value The argument value
-         * @return Request        The request
-         */
-        public function addArgument(
-            string $name,
-            string $value
-        ) : Request
-        {
-            $this->args[$name] = $value;
-            return $this;
+            return (
+                array_key_exists($name, $this->args)
+                    ? $this->args[$name]
+                    : null
+            );
         }
 
         /**
          * Returns the request files
          * 
-         * @return array The files
+         * @return array Request files
          */
         public function getFiles() : array
         {
-            return $this->files;
+            return ($this->files);
         }
 
         /**
          * Returns a request file
          * 
-         * @param  string  $name The file name
-         * @return ?string       The file if exists, otherwise null
+         * @param string $name File name
+         * @return ?string File if exists, `null` otherwise
          */
-        public function getFile(
-            string $name
-        ) : ?string
+        public function getFile(string $name) : ?string
         {
-            return array_key_exists($name, $this->files) ? $this->files[$name] : null;
+            return (
+                array_key_exists($name, $this->files)
+                    ? $this->files[$name]
+                    : null
+            );
         }
 
         /**
-         * Add a file to the request
+         * Returns all the request data
          * 
-         * @param  string  $path   The path to the file if there is one, otherwise the content
-         * @param  ?string $mime   The mime type of the file
-         * @param  ?string $name   The download name of the file
-         * @param  bool    $isFile true if the path refers to a file
-         * @return Request         The request
+         * @return array Request data
          */
-        public function addFile(
-            string  $path,
-            ?string $mime,
-            ?string $name,
-            bool    $isFile = true
-        ) : Request
+        public function getData() : array
         {
-            $this->files[] = $isFile ? new \CURLFile($path, $mime, $name) : new \CURLStringFile($path, $mime, $name);
+            return (array_merge($this->args, $this->files));
+        }
+
+        /**
+         * Sets the request URL
+         * 
+         * @param string $url Request URL
+         * 
+         * @return Request Reference to this request
+         */
+        public function setURL(string $url) : Request
+        {
+            $this->url = $url;
+            return ($this);
+        }
+
+        /**
+         * Sets the request method
+         * 
+         * @param string $method Request method
+         * 
+         * @return Request Reference to this request
+         */
+        public function setMethod(string $method) : Request
+        {
+            $this->method = $method;
+            return ($this);
+        }
+
+        /**
+         * Sets the request port
+         * 
+         * @param int $port Request port
+         * 
+         * @return Request reference to this request
+         */
+        public function setPort(int $port) : Request
+        {
+            $this->port = $port;
+            return ($this);
+        }
+
+        /**
+         * Sets the request headers
+         * 
+         * @param array $headers Request headers (name => value)
+         * 
+         * @return Request Reference to this request
+         */
+        public function setHeaders(array $headers) : Request
+        {
+            foreach ($headers as $name => $value)
+                $this->setHeader($name, $value);
             return $this;
         }
 
         /**
-         * Defines the request timeout
+         * Sets a header of the request
          * 
-         * @param  int     $timeout The timeout (ms)
-         * @return Request          The request
+         * @param string $name Header name
+         * @param string|array $value Header value
+         * 
+         * @return Request Reference to this request
          */
-        public function setTimeout(
-            int $timeout
-        ) : Request
+        public function setHeader(string $name, string|array $value) : Request
+        {
+            $this->headers[$name] = (
+                is_array($value)
+                    ? implode('; ', $value)
+                    : $value
+            );
+            return ($this);
+        }
+
+        /**
+         * Defines the GET or POST arguments of the request
+         * 
+         * @param array $args Request arguments (name => value)
+         * 
+         * @return Request Reference to this request
+         */
+        public function setArguments(array $args) : Request
+        {
+            foreach ($args as $name => $value)
+                $this->setArgument($name, $value);
+            return ($this);
+        }
+
+        /**
+         * Sets a GET or POST argument of the request
+         * 
+         * @param string $name  Argument name
+         * @param string $value Argument value
+         * 
+         * @return Request Reference to this request
+         */
+        public function setArgument(string $name, string $value) : Request
+        {
+            $this->args[$name] = $value;
+            return ($this);
+        }
+
+        /**
+         * Sets the request timeout
+         * 
+         * @param int $timeout Request timeout (ms)
+         * 
+         * @return Request Reference to this request
+         */
+        public function setTimeout(int $timeout) : Request
         {
             $this->timeout = $timeout;
-            return $this;
+            return ($this);
         }
 
         /**
-         * Defines the file transfer min speed
+         * Sets the file transfer min speed
          * 
-         * @param  int     $speed The speed (o/s)
-         * @param  ?int    $time  The duration of the verification (s)
-         * @return Request        The request
+         * @param int $speed Transfer speed (o/s)
+         * @param ?int $time Verification duration (s)
+         * 
+         * @return Request Reference to this request
          */
-        public function setTransferMinSpeed(
-            int  $speed,
-            ?int $time  = null
-        ) : Request
+        public function setTransferMinSpeed(int $speed, ?int $time = null) : Request
         {
             $this->transferMinSpeed = $speed;
             $this->transferMinTime = $time;
-            return $this;
+            return ($this);
         }
 
         /**
-         * Defines the download max speed
+         * Sets the position of the transfer resume
          * 
-         * @param  int     $speed The speed (o/s)
-         * @return Request        The request
-         */
-        public function setDownloadMaxSpeed(
-            int $speed
-        ) : Request
-        {
-            $this->downloadMaxSpeed = $speed;
-            return $this;
-        }
-
-        /**
-         * Defines the upload max speed
+         * @param int $position Position (o)
          * 
-         * @param  int     $speed The speed (o/s)
-         * @return Request        The request
+         * @return Request Reference to this request
          */
-        public function setUploadMaxSpeed(
-            int $speed
-        ) : Request
-        {
-            $this->uploadMaxSpeed = $speed;
-            return $this;
-        }
-
-        /**
-         * Defines the download max size
-         * 
-         * @param  int     $size The size (o)
-         * @return Request       The request
-         */
-        public function setDownloadMaxSize(
-            int $size
-        ) : Request
-        {
-            $this->downloadMaxSize = $size;
-            return $this;
-        }
-
-        /**
-         * Defines the upload size
-         * 
-         * @param  int     $size The size (o)
-         * @return Request       The request
-         */
-        public function setUploadSize(
-            int $size
-        ) : Request
-        {
-            $this->uploadSize = $size;
-            return $this;
-        }
-
-        /**
-         * Defines the position of the transfer resume
-         * 
-         * @param  int     $position The position (o)
-         * @return Request           The request
-         */
-        public function setTransferResume(
-            int $position
-        ) : Request
+        public function setTransferResume(int $position) : Request
         {
             $this->transferResume = $position;
-            return $this;
+            return ($this);
         }
 
         /**
-         * Defines where the file of the transfer will be downloaded
+         * Sets the download max speed
          * 
-         * @param  string  $path The path
-         * @return Request       The request
+         * @param int $speed Speed (o/s)
+         * 
+         * @return Request Reference to this request
          */
-        public function setDownloadPath(
-            string $path
-        ) : Request
+        public function setDownloadMaxSpeed(int $speed) : Request
+        {
+            $this->downloadMaxSpeed = $speed;
+            return ($this);
+        }
+
+        /**
+         * Sets the download max size
+         * 
+         * @param int $size Size (o)
+         * 
+         * @return Request Reference to this request
+         */
+        public function setDownloadMaxSize(int $size) : Request
+        {
+            $this->downloadMaxSize = $size;
+            return ($this);
+        }
+
+        /**
+         * Sets the transfer file destination
+         * 
+         * @param string $path Destination path
+         * 
+         * @return Request Reference to this request
+         */
+        public function setDownloadPath(string $path) : Request
         {
             $this->downloadPath = $path;
-            return $this;
+            return ($this);
         }
 
         /**
-         * Defines the path of the file that will be transfered
+         * Sets the upload max speed
          * 
-         * @param  string  $path The path of the file
-         * @return Request       The request
+         * @param int $speed Speed (o/s)
+         * 
+         * @return Request Reference to this request
          */
-        public function setUploadPath(
-            string $path
-        ) : Request
+        public function setUploadMaxSpeed(int $speed) : Request
+        {
+            $this->uploadMaxSpeed = $speed;
+            return ($this);
+        }
+
+        /**
+         * Sets the upload size
+         * 
+         * @param int $size Size (o)
+         * 
+         * @return Request Reference to this request
+         */
+        public function setUploadSize(int $size) : Request
+        {
+            $this->uploadSize = $size;
+            return ($this);
+        }
+
+        /**
+         * Defines the path of the file to upload
+         * 
+         * @param string $path Path of the file
+         * 
+         * @return Request Reference to this request
+         */
+        public function setUploadPath(string $path) : Request
         {
             $this->uploadPath = $path;
-            return $this;
+            return ($this);
+        }
+
+        /**
+         * Adds a file to the request
+         * 
+         * @param ?string $path Path to the file
+         * @param ?string $content Content of the file if there is one
+         * @param ?string $mime Mime type of the file
+         * @param ?string $name Download name of the file
+         * 
+         * @return Request Reference to this request
+         */
+        public function addFile(?string $path, ?string $content, ?string $mime, ?string $name) : Request
+        {
+            $this->files[] = (
+                $path
+                    ? new \CURLFile($path, $mime, $name)
+                    : new \CURLStringFile($content, $mime, $name)
+            );
+            return ($this);
         }
 
         /**
          * Send the request
          * 
-         * @return ?\F2P2\Response The response received if success, otherwise null
+         * @return ?\F2P2\Response Response received if success, `null` otherwise
+         * 
+         * @throws \Exception If URL is not defined
          */
         public function send() : ?\F2P2\Response
         {
             if ($this->url === null)
-            {
                 throw new \Exception('Cannot send the request because URL is not defined');
-            }
-            $curl = curl_init($this->url.($this->method === 'GET' ? http_build_query($this->args, '?') : ''));
+            $curl = curl_init($this->url . (
+                $this->method === 'GET'
+                    ? http_build_query($this->args, '?')
+                    : ''
+            ));
             curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
             if ($this->downloadPath === null)
-            {
                 curl_setopt($curl, CURLOPT_HEADER, true);
-            }
             curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $this->method);
             curl_setopt($curl, CURLOPT_PORT, $this->port);
             $headers = [];
             foreach ($this->headers as $key => $value)
-            {
                 $headers[] = "$key: $value";
-            }
             curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
             if ($this->method === 'POST')
-            {
                 curl_setopt($curl, CURLOPT_POSTFIELDS, $this->getData());
-            }
             foreach ([
-                CURLOPT_TIMEOUT_MS           => $this->timeout,
-                CURLOPT_LOW_SPEED_LIMIT      => $this->transferMinSpeed,
-                CURLOPT_LOW_SPEED_TIME       => $this->transferMinTime,
-                CURLOPT_RESUME_FROM          => $this->transferResume,
-                CURLOPT_MAXFILESIZE_LARGE    => $this->downloadMaxSize,
+                CURLOPT_TIMEOUT_MS => $this->timeout,
+                CURLOPT_LOW_SPEED_LIMIT => $this->transferMinSpeed,
+                CURLOPT_LOW_SPEED_TIME => $this->transferMinTime,
+                CURLOPT_RESUME_FROM => $this->transferResume,
+                CURLOPT_MAXFILESIZE_LARGE => $this->downloadMaxSize,
                 CURLOPT_MAX_RECV_SPEED_LARGE => $this->downloadMaxSpeed,
-                CURLOPT_INFILE               => $this->uploadSize,
+                CURLOPT_INFILE => $this->uploadSize,
                 CURLOPT_MAX_SEND_SPEED_LARGE => $this->uploadMaxSpeed,
             ] as $option => $value)
             {
                 if ($value)
-                {
                     curl_setopt($curl, $option, $value);
-                }
             }
-            $downloadFile = $this->downloadPath ? fopen($this->downloadPath, 'w') : null;
+            $downloadFile = (
+                $this->downloadPath
+                    ? fopen($this->downloadPath, 'w')
+                    : null
+            );
             if ($downloadFile)
-            {
                 curl_setopt($curl, CURLOPT_FILE, $downloadFile);
-            }
-            $uploadFile = $this->uploadPath ? fopen($this->uploadPath, 'r') : null;
+            $uploadFile = (
+                $this->uploadPath
+                    ? fopen($this->uploadPath, 'r')
+                    : null
+            );
             if ($uploadFile)
-            {
                 curl_setopt($curl, CURLOPT_INFILE, $uploadFile);
-            }
             $responseTXT = curl_exec($curl);
             $this->error = curl_error($curl);
             if ($downloadFile)
-            {
                 fclose($downloadFile);
-            }
             if ($uploadFile)
-            {
                 fclose($uploadFile);
-            }
             if ($this->error === '')
             {
                 $this->error = null;
@@ -504,17 +558,14 @@
                 {
                     $parts = explode(': ', $header);
                     if (count($parts) === 2)
-                    {
-                        $response->addHeader($parts[0], $parts[1]);
-                    }
+                        $response->setHeader($parts[0], $parts[1]);
                 }
-                curl_close($curl);
-                return $response;
+                return ($response);
             }
             else
-            {
-                return null;
-            }
+                return (null);
         }
+
     }
+
 ?>

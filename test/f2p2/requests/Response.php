@@ -4,7 +4,7 @@
 
 
     /**
-     * Class that represent an HTTP response
+     * HTTP response
      */
     class Response
     {
@@ -15,7 +15,7 @@
         private int $code = 200;
 
         /**
-         * Headers
+         * HTTP headers
          */
         private array $headers = [];
 
@@ -204,7 +204,7 @@
     class ResponseDownload extends ResponseData
     {
 
-        public function __construct(string  $data, ?string $extension = null, bool $isFile = false, ?string $fileName = null)
+        public function __construct(string $data, ?string $extension = null, bool $isFile = false, ?string $fileName = null)
         {
             parent::__construct($data, $extension, $isFile);
             if ($fileName)

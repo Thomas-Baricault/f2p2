@@ -54,12 +54,6 @@
 
     /**
      * Insert query class
-     * 
-     * @link      link
-     * @since     Version 0.0
-     * @author    Thomas Baricault <thomas.baricault@gmail.com>
-     * @copyright Copyright (c) 2024, Thomas Baricault
-     * @license   https://opensource.org/license/bsd-2-clause
      */
     class QueryInsert extends Query
     {
@@ -87,12 +81,6 @@
 
     /**
      * Select query class
-     * 
-     * @link      link
-     * @since     Version 0.0
-     * @author    Thomas Baricault <thomas.baricault@gmail.com>
-     * @copyright Copyright (c) 2024, Thomas Baricault
-     * @license   https://opensource.org/license/bsd-2-clause
      */
     class QuerySelect extends Query
     {
