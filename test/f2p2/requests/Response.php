@@ -1,125 +1,131 @@
 <?php
+
     namespace F2P2;
 
 
     /**
-     * The class that represent a network response
-     * 
-     * @link      link
-     * @since     Version 0.0
-     * @author    Thomas Baricault <thomas.baricault@gmail.com>
-     * @copyright Copyright (c) 2024, Thomas Baricault
-     * @license   https://opensource.org/license/bsd-2-clause
+     * Class that represent an HTTP response
      */
     class Response
     {
-        private int     $code    = 200;
-        private array   $headers = [];
-        private ?string $body    = null;
+
+        /**
+         * Status code
+         */
+        private int $code = 200;
+
+        /**
+         * Headers
+         */
+        private array $headers = [];
+
+        /**
+         * Response body
+         */
+        private ?string $body = null;
 
 
         /**
          * Returns the response status code
          * 
-         * @return int The status code
+         * @return int Status code
          */
         public function getCode() : int
         {
-            return $this->code;
-        }
-
-        /**
-         * Defines the response status code
-         * 
-         * @param  int      $code The code
-         * @return Response       The response
-         */
-        public function setCode(
-            int $code
-        ) : Response
-        {
-            $this->code = $code;
-            return $this;
+            return ($this->code);
         }
 
         /**
          * Returns the response headers
          * 
-         * @return array The headers (name => value)
+         * @return array Response headers (name => value)
          */
         public function getHeaders() : array
         {
-            return $this->headers;
+            return ($this->headers);
         }
 
         /**
          * Returns a response header
          * 
-         * @param  string  $name The header name
-         * @return ?string       The header value if exists, otherwise null
+         * @param string $name Header name
+         * @return ?string Header value if exists, `null` otherwise
          */
-        public function getHeader(
-            string $name
-        ) : ?string
+        public function getHeader(string $name) : ?string
         {
-            return array_key_exists($name, $this->headers) ? $this->headers[$name] : null;
+            return (
+                array_key_exists($name, $this->headers)
+                    ? $this->headers[$name]
+                    : null
+            );
         }
 
         /**
-         * Defines the response headers
+         * Returns the response body
          * 
-         * @param  array    $headers The headers (name => value)
-         * @return Response          The response
-         */
-        public function setHeaders(
-            array $headers
-        ) : Response
-        {
-            foreach ($headers as $name => $value)
-            {
-                $this->addHeader($name, $value);
-            }
-            return $this;
-        }
-
-        /**
-         * Add a header to the response
-         * 
-         * @param  string       $name  The header name
-         * @param  string|array $value The header value
-         * @return Response            The response
-         */
-        public function addHeader(
-            string       $name,
-            string|array $value
-        ) : Response
-        {
-            $this->headers[$name] = is_array($value) ? implode('; ', $value) : $value;
-            return $this;
-        }
-
-        /**
-         * Returns the response body content
-         * 
-         * @return ?string The data
+         * @return ?string Response body
          */
         public function getBody() : ?string
         {
-            return $this->code;
+            return ($this->body);
         }
 
         /**
-         * Defines the response body content
+         * Sets the response status code
          * 
-         * @param  string   $body The data
-         * @return Response       The response
+         * @param int $code Status code
+         * 
+         * @return Response Reference to this response
          */
-        public function setBody(
-            string $body
-        ) : Response
+        public function setCode(int $code) : Response
+        {
+            $this->code = $code;
+            return ($this);
+        }
+
+        /**
+         * Sets the response headers
+         * 
+         * @param array $headers Response headers (name => value)
+         * 
+         * @return Response Reference to this response
+         */
+        public function setHeaders(array $headers) : Response
+        {
+            foreach ($headers as $name => $value)
+                $this->setHeader($name, $value);
+            return ($this);
+        }
+
+        /**
+         * Set a response header
+         * 
+         * @param string $name Header name
+         * @param string|array $value Header value
+         * 
+         * @return Response Reference to this response
+         */
+        public function setHeader(string $name, string|array $value) : Response
+        {
+            $this->headers[$name] = (
+                is_array($value)
+                    ? implode('; ', $value)
+                    : $value
+            );
+            return ($this);
+        }
+
+        /**
+         * Sets the response body
+         * 
+         * @param string $body Response body
+         * 
+         * @return Response Reference to this response
+         */
+        public function setBody(string $body) : Response
         {
             $this->body = $body;
-            return $this;
+            return ($this);
         }
 
         /**
@@ -131,171 +137,145 @@
         {
             http_response_code($this->code);
             foreach ($this->headers as $key => $value)
-            {
                 header("$key: $value");
-            }
             if ($this->body)
-            {
                 echo $this->body;
-            }
             die();
         }
+
     }
 
 
     /**
-     * The base class for data responses
-     * 
-     * @link      link
-     * @since     Version 0.0
-     * @author    Thomas Baricault <thomas.baricault@gmail.com>
-     * @copyright Copyright (c) 2024, Thomas Baricault
-     * @license   https://opensource.org/license/bsd-2-clause
+     * Abtract base class for HTTP data responses
      */
     abstract class ResponseData extends Response
     {
+
         /**
-         * @param string  $data      The data
-         * @param ?string $extension The extension defining the type of data
-         * @param bool    $isFile    true if the content of $data is a path to a file
+         * Constructs a response
+         * 
+         * @param string $data Response data
+         * @param ?string $extension Extension defining the type of data
+         * @param bool $isFile Whether `$data` is a path to a file
          */
-        public function __construct(
-            string  $data,
-            ?string $extension = null,
-            bool    $isFile    = false
-        ) {
+        public function __construct(string $data, ?string $extension = null, bool $isFile = false)
+        {
             if ($isFile && $extension === null)
             {
                 $parts = explode('.', $data);
-                $extension = $parts[count($parts)-1];
+                $extension = $parts[count($parts) - 1];
             }
             $this
-                ->addHeader('Content-Type', [($extension ? \F2P2\extensionToMIME($extension) : null) ?? 'text/html', 'charset=utf-8'])
-                ->setBody($isFile ? file_get_contents($data) : $data);
+                ->setHeader('Content-Type', [
+                    $extension
+                        ? \F2P2\extensionToMIME($extension)
+                        : 'text/html',
+                    'charset=utf-8',
+                ])
+                ->setBody(
+                    $isFile
+                        ? file_get_contents($data)
+                        : $data
+                );
         }
+
     }
 
 
     /**
-     * The class that represent responses displayed as a webpage
-     * 
-     * @link      link
-     * @since     Version 0.0
-     * @author    Thomas Baricault <thomas.baricault@gmail.com>
-     * @copyright Copyright (c) 2024, Thomas Baricault
-     * @license   https://opensource.org/license/bsd-2-clause
+     * Class for responses displayed as a webpage
      */
     class ResponsePage extends ResponseData
     {
-        public function __construct(
-            string  $data,
-            ?string $extension = null,
-            bool    $isFile    = false
-        ) {
+
+        public function __construct(string $data, ?string $extension = null, bool $isFile = false)
+        {
             parent::__construct($data, $extension, $isFile);
-            $this->addHeader('Content-Disposition', 'inline');
+            $this->setHeader('Content-Disposition', 'inline');
         }
+
     }
 
 
     /**
-     * The class that represent responses that are downloads
-     * 
-     * @link      link
-     * @since     Version 0.0
-     * @author    Thomas Baricault <thomas.baricault@gmail.com>
-     * @copyright Copyright (c) 2024, Thomas Baricault
-     * @license   https://opensource.org/license/bsd-2-clause
+     * Class for responses that are downloads
      */
     class ResponseDownload extends ResponseData
     {
-        public function __construct(
-            string  $data,
-            ?string $extension = null,
-            bool    $isFile    = false,
-            ?string $fileName  = null
-        ) {
+
+        public function __construct(string  $data, ?string $extension = null, bool $isFile = false, ?string $fileName = null)
+        {
             parent::__construct($data, $extension, $isFile);
             if ($fileName)
-            {
                 $fileName = $fileName;
-            }
             else if ($isFile)
             {
                 $parts = explode('/', $data);
                 $fileName = $parts[count($parts)-1];
             }
-            $this->addHeader('Content-Disposition', 'attachment'.($fileName ? '; filename="'.$fileName.'"' : ''));
+            $this->setHeader('Content-Disposition', 'attachment' . (
+                $fileName
+                    ? '; filename="' . $fileName . '"'
+                    : ''
+            ));
         }
+
     }
 
 
     /**
-     * The class that represent a http error response
-     * 
-     * @link      link
-     * @since     Version 0.0
-     * @author    Thomas Baricault <thomas.baricault@gmail.com>
-     * @copyright Copyright (c) 2024, Thomas Baricault
-     * @license   https://opensource.org/license/bsd-2-clause
+     * HTTP error response
      */
     class ResponseError extends Response
     {
+
         /**
-         * @param int $code The error code
+         * @param int $code Error code
          */
-        public function __construct(
-            int $code
-        ) {
+        public function __construct(int $code)
+        {
             $this->setCode($code);
         }
+
     }
 
 
     /**
-     * The class that represent a redirection to an URL
-     * 
-     * @link      link
-     * @since     Version 0.0
-     * @author    Thomas Baricault <thomas.baricault@gmail.com>
-     * @copyright Copyright (c) 2024, Thomas Baricault
-     * @license   https://opensource.org/license/bsd-2-clause
+     * Class for responses that are redirections to URL
      */
     class ResponseRedirectURL extends Response
     {
+
         /**
-         * @param string $url The redirection URL
+         * @param string $url Redirection URL
          */
-        public function __construct(
-            string $url
-        ) {
+        public function __construct(string $url)
+        {
             $this
                 ->setCode(302)
-                ->addHeader('Location', $url);
+                ->setHeader('Location', $url);
         }
+
     }
 
 
     /**
-     * The class that represent a redirection to a route
-     * 
-     * @link      link
-     * @since     Version 0.0
-     * @author    Thomas Baricault <thomas.baricault@gmail.com>
-     * @copyright Copyright (c) 2024, Thomas Baricault
-     * @license   https://opensource.org/license/bsd-2-clause
+     * Class for responses that are redirections to route
      */
     class ResponseRedirectRoute extends ResponseRedirectURL
     {
+
         /**
-         * @param string $route The redirection route name
+         * @param string $route Redirection route name
+         * @param array $params Route parameters
+         * @param array $get GET parameters
          */
-        public function __construct(
-            string $route,
-            array  $params = [],
-            array  $get    = []
-        ) {
+        public function __construct(string $route, array $params = [], array $get = [])
+        {
             parent::__construct(\F2P2\Router::getRouteURL($route, $params, $get));
         }
+
     }
+
 ?>

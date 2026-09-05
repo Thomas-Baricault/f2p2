@@ -1,56 +1,59 @@
 <?php
+
     namespace F2P2;
 
 
     /**
-     * The base class for the database query representations
-     * 
-     * @link      link
-     * @since     Version 0.0
-     * @author    Thomas Baricault <thomas.baricault@gmail.com>
-     * @copyright Copyright (c) 2024, Thomas Baricault
-     * @license   https://opensource.org/license/bsd-2-clause
+     * Abstract base class for database query representations
      */
     abstract class Query
     {
+
+        /**
+         * Table to affect
+         */
         protected string $table;
 
+        /**
+         * Prepare values
+         */
         protected array $values = [];
 
 
         /**
-         * @param string $table The table on which the query will be execute
+         * Constructs a query
+         * 
+         * @param string $table Table on which the query will be execute
          */
-        public function __construct(
-            string $table
-        ) {
+        public function __construct(string $table)
+        {
             $this->table = $table;
         }
 
         /**
-         * Defines the prepare values
+         * Sets the prepare values
          * 
-         * @param  array $values The values
-         * @return Query The query
+         * @param array $values New values
+         * 
+         * @return Query Reference to this query
          */
-        public function setValues(
-            array $values
-        ) : Query
+        public function setValues(array $values) : Query
         {
             $this->values = $values;
-            return $this;
+            return ($this);
         }
 
         /**
-         * Execute the query
+         * Executes the query
          * 
-         * @return array The result of the query
+         * @return array Query result
          */
         abstract public function execute() : array;
+
     }
 
     /**
-     * The class that represent an insert query
+     * Insert query class
      * 
      * @link      link
      * @since     Version 0.0
@@ -60,12 +63,13 @@
      */
     class QueryInsert extends Query
     {
+
         public function execute() : array
         {
             $table = $this->table;
             $columns = [];
             $placeholders = [];
-            foreach ($this->values as $column => $value)
+            foreach ($this->values as $column => $_)
             {
                 $columns[] = $column;
                 $placeholders[] = ":$column";
@@ -77,11 +81,12 @@
                 $this->values
             );
         }
+
     }
 
 
     /**
-     * The class that represent a select query
+     * Select query class
      * 
      * @link      link
      * @since     Version 0.0

@@ -1,9 +1,9 @@
 [
     {
-        "name"       : "welcome",
-        "method"     : "GET",
-        "uri"        : "/",
+        "name" : "welcome",
+        "method" : "GET",
+        "uri" : "/",
         "controller" : "Welcome",
-        "action"     : "index"
+        "action" : "index"
     }
 ]

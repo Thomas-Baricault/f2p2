@@ -1,4 +1,5 @@
 <?php
+
     namespace F2P2;
 
 
@@ -13,6 +14,7 @@
      */
     class EMail
     {
+
         private ?string $from_email = null;
         private ?string $from_name  = null;
         private array   $to         = [];

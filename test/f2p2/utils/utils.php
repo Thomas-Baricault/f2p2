@@ -48,7 +48,7 @@
         string $extension
     ) : ?string
     {
-        $data = readJSON('../config/mime.json');
+        $data = readJSON('config/mime.json');
         foreach ($data as $mime => $extensions)
         {
             if (is_array($extensions) && in_array($extension, $extensions) || !is_array($extensions) && $extensions === $extension)
@@ -70,7 +70,7 @@
         string $mime
     ) : ?string
     {
-        $data = readJSON('../config/mime.json');
+        $data = readJSON('config/mime.json');
         return array_key_exists($mime, $data) ? (is_array($data[$mime]) ? $data[$mime][0] : $data[$mime]) : null;
     }
 ?>

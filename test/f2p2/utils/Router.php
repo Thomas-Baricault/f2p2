@@ -192,7 +192,7 @@
                                     }
                                 }
                             }
-                            require_once('../app/controllers/'.$route['controller'].'Controller.php');
+                            require_once('app/controllers/'.$route['controller'].'Controller.php');
                             ((new ('\\App\\Controllers\\'.$route['controller'].'Controller')())->{$route['action']}($request, $params))->send();
                         }
                     }
@@ -213,9 +213,9 @@
             int           $code
         ) : void
         {
-            if (file_exists('../app/controllers/ErrorController.php'))
+            if (file_exists('app/controllers/ErrorController.php'))
             {
-                require_once('../app/controllers/ErrorController.php');
+                require_once('app/controllers/ErrorController.php');
                 if (class_exists('\\App\\Controllers\\ErrorController') && method_exists('\\App\\Controllers\\ErrorController', "error$code"))
                 {
                     ((new ('\\App\\Controllers\\ErrorController')())->{"error$code"}($request))->send();
