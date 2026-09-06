@@ -100,18 +100,18 @@
          * 
          * @return Request Resulting request
          */
-        static public function fromCurrent() : Request
+        public static function current() : Request
         {
             $request = (new Request())
-                ->setUrl(\F2P2\Server::getCurrentURI())
-                ->setMethod(\F2P2\Server::getRequestMethod())
-                ->setPort(\F2P2\Server::getServerPort())
+                ->setUrl(\F2P2\Server::currentURI())
+                ->setMethod(\F2P2\Server::requestMethod())
+                ->setPort(\F2P2\Server::serverPort())
                 ->setHeaders(getallheaders())
                 ->setArguments(
-                    \F2P2\Server::getRequestMethod() === 'GET'
+                    \F2P2\Server::requestMethod() === 'GET'
                         ? $_GET
                         : (
-                            \F2P2\Server::getRequestMethod() === 'POST'
+                            \F2P2\Server::requestMethod() === 'POST'
                                 ? $_POST
                                 : []
                         )

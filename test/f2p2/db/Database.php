@@ -12,7 +12,7 @@
         /**
          * Database handler
          */
-        static private ?\PDO $pdo = null;
+        private static ?\PDO $pdo = null;
 
 
         /**

@@ -24,21 +24,6 @@
 
 
     /**
-     * Check if email is a valid one
-     * 
-     * @param  string $email The email
-     * @return bool          If it's valid
-     */
-    function emailIsValid(
-        string $email
-    ) : bool
-    {
-        $parts = explode('@', $email);
-        return filter_var($email, FILTER_VALIDATE_EMAIL) && count($parts) === 2 && checkdnsrr($parts[1]);
-    }
-
-
-    /**
      * Returns the MIME equivalent for a file extension
      * 
      * @param  string  $extension The extension

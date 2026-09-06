@@ -17,7 +17,7 @@
          * 
          * @return string HTML result
          */
-        static public function render(string $name, array $params = []) : string
+        public static function render(string $name, array $params = []) : string
         {
             ob_start();
             require('app/views/' . $name);
@@ -31,9 +31,9 @@
          * 
          * @return string Resulting URL
          */
-        static public function asset(string $path) : string
+        public static function asset(string $path) : string
         {
-            return (\F2P2\Server::getBaseURL() . '/' . $path);
+            return (\F2P2\Server::baseURL() . '/' . $path);
         }
 
         /**
@@ -43,7 +43,7 @@
          * 
          * @return string Resulting URL
          */
-        static public function css(string $path) : string
+        public static function css(string $path) : string
         {
             return (self::asset("css/$path"));
         }
@@ -55,7 +55,7 @@
          * 
          * @return string Resulting URL
          */
-        static public function js(string $path) : string
+        public static function js(string $path) : string
         {
             return (self::asset("js/$path"));
         }
@@ -67,7 +67,7 @@
          * 
          * @return string Resulting URL
          */
-        static public function img(string $path) : string
+        public static function img(string $path) : string
         {
             return self::asset("img/$path");
         }
@@ -81,9 +81,9 @@
          * 
          * @return string Resulting URL
          */
-        static public function route(string $name, array $params = [], array $get = []) : string
+        public static function route(string $name, array $params = [], array $get = []) : string
         {
-            return (\F2P2\Router::getRouteURL($name, $params, $get));
+            return (\F2P2\Server::baseURL() . \F2P2\Router::getRoute($name)->computeURI($params, $get));
         }
 
     }

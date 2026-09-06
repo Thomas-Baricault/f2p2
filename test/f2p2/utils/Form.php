@@ -1055,7 +1055,6 @@
          * Fill the form with data
          * 
          * @param  array $data The data (fieldname => value)
-         * @return void
          */
         public function fill(
             array $data

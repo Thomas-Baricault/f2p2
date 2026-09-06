@@ -14,7 +14,7 @@
          * 
          * @return string Base URL
          */
-        static public function getBaseURL() : string
+        public static function baseURL() : string
         {
             return ($_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['SERVER_NAME']);
         }
@@ -24,7 +24,7 @@
          * 
          * @return string Request URI
          */
-        static public function getCurrentURI() : string
+        public static function currentURI() : string
         {
             return ($_SERVER['PATH_INFO'] ?? '/');
         }
@@ -34,9 +34,9 @@
          * 
          * @return string Request URL
          */
-        static public function getCurrentURL() : string
+        public static function currentURL() : string
         {
-            return (self::getBaseURL() . self::getCurrentURI());
+            return (self::baseURL() . self::currentURI());
         }
 
         /**
@@ -44,7 +44,7 @@
          * 
          * @return string Request method
          */
-        static public function getRequestMethod() : string
+        public static function requestMethod() : string
         {
             return ($_SERVER['REQUEST_METHOD']);
         }
@@ -54,7 +54,7 @@
          * 
          * @return int Request port
          */
-        static public function getServerPort() : int
+        public static function serverPort() : int
         {
             return ($_SERVER['SERVER_PORT']);
         }

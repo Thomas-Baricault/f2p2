@@ -29,6 +29,6 @@ init:
 	rm -dfr .env/tmp
 
 test:
-	cd test && php -S 0.0.0.0:8080 index.php
+	cd test && php -S localhost:8080 index.php
 
 .PHONY: init test

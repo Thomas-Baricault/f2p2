@@ -6,7 +6,7 @@
     /**
      * Abstract base class for models
      */
-    abstract class BaseModel
+    abstract class Model
     {
 
         /**
@@ -37,12 +37,11 @@
          * 
          * @return ?object Entity if exists, `null` otherwise
          */
-        static public function findOne(int $id) : ?object
+        public static function findOne(int $id) : ?object
         {
-            $data = (new \F2P2\QuerySelect(get_called_class()::TABLE))
-                ->setWhere('id = :id')
-                ->setValues(['id' => $id])
-            ->execute();
+            $data = (new \F2P2\SelectQuery(get_called_class()::TABLE))
+                ->where('id = :id')
+                ->execute(['id' => $id]);
             return (
                 count($data) === 0
                     ? null
@@ -55,9 +54,9 @@
          * 
          * @return array Entities
          */
-        static public function findAll() : array
+        public static function findAll() : array
         {
-            $data = (new \F2P2\QuerySelect(get_called_class()::TABLE))->execute();
+            $data = (new \F2P2\SelectQuery(get_called_class()::TABLE))->execute();
             $result = [];
             foreach ($data as $entry)
                 $result[] = new (get_called_class())($entry);
@@ -129,8 +128,6 @@
         /**
          * Push the entity to the database (update if already exists)
          * 
-         * @return void
-         * 
          * @throws \Exception If entity is invalid
          */
         public function push() : void
@@ -146,17 +143,15 @@
                 foreach ($this->data as $column => $value)
                     $update[$column] = ":$column";
                 $values['id'] = $this->id;
-                (new \F2P2\QueryUpdate(get_class($this)::TABLE))
-                    ->setUpdate($update)
-                    ->setWhere('id = :id')
-                    ->setValues($values)
-                ->execute();
+                (new \F2P2\UpdateQuery(get_class($this)::TABLE))
+                    ->update($update)
+                    ->where('id = :id')
+                    ->execute($values);
             }
             else
             {
-                (new \F2P2\QueryInsert(get_class($this)::TABLE))
-                    ->setValues($values)
-                ->execute();
+                (new \F2P2\InsertQuery(get_class($this)::TABLE))
+                    ->execute($values);
             }
         }
 
@@ -164,8 +159,6 @@
          * Remove the entity from the database (the entity must have a valid id)
          * 
          * @param bool $cascading Whether automatically remove entities that reference this entity
-         * 
-         * @return void
          * 
          * @throws \Exception If the entity is undefined
          */
@@ -178,16 +171,15 @@
             {
                 foreach (get_declared_classes() as $model)
                 {
-                    if (is_subclass_of($model, BaseModel::class))
+                    if (is_subclass_of($model, Model::class))
                     {
                         foreach ($model::COLUMNS as $name => $params)
                         {
                             if (array_key_exists('reference', $params) && $params['reference'] === $class)
                             {
-                                $data = (new \F2P2\QuerySelect($model::TABLE))
-                                    ->setWhere($name.' = :id')
-                                    ->setValues(['id' => $this->id])
-                                ->execute();
+                                $data = (new \F2P2\SelectQuery($model::TABLE))
+                                    ->where($name.' = :id')
+                                    ->execute(['id' => $this->id]);
                                 foreach ($data as $entry)
                                     (new $model($entry))->remove();
                             }
@@ -195,10 +187,9 @@
                     }
                 }
             }
-            (new \F2P2\QueryDelete($class::TABLE))
-                ->setWhere('id = :id')
-                ->setValues(['id' => $this->id])
-            ->execute();
+            (new \F2P2\DeleteQuery($class::TABLE))
+                ->where('id = :id')
+                ->execute(['id' => $this->id]);
         }
     }
 

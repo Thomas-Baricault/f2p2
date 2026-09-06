@@ -130,8 +130,6 @@
 
         /**
          * Send the response
-         * 
-         * @return void
          */
         public function send() : void
         {
@@ -149,7 +147,7 @@
     /**
      * Abtract base class for HTTP data responses
      */
-    abstract class ResponseData extends Response
+    abstract class DataResponse extends Response
     {
 
         /**
@@ -186,7 +184,7 @@
     /**
      * Class for responses displayed as a webpage
      */
-    class ResponsePage extends ResponseData
+    class PageResponse extends DataResponse
     {
 
         public function __construct(string $data, ?string $extension = null, bool $isFile = false)
@@ -201,7 +199,7 @@
     /**
      * Class for responses that are downloads
      */
-    class ResponseDownload extends ResponseData
+    class DownloadResponse extends DataResponse
     {
 
         public function __construct(string $data, ?string $extension = null, bool $isFile = false, ?string $fileName = null)
@@ -227,7 +225,7 @@
     /**
      * HTTP error response
      */
-    class ResponseError extends Response
+    class ErrorResponse extends Response
     {
 
         /**
@@ -244,7 +242,7 @@
     /**
      * Class for responses that are redirections to URL
      */
-    class ResponseRedirectURL extends Response
+    class RedirectURLResponse extends Response
     {
 
         /**
@@ -263,7 +261,7 @@
     /**
      * Class for responses that are redirections to route
      */
-    class ResponseRedirectRoute extends ResponseRedirectURL
+    class RedirectRouteResponse extends RedirectURLResponse
     {
 
         /**
@@ -273,7 +271,7 @@
          */
         public function __construct(string $route, array $params = [], array $get = [])
         {
-            parent::__construct(\F2P2\Router::getRouteURL($route, $params, $get));
+            parent::__construct(\F2P2\View::route($route, $params, $get));
         }
 
     }

@@ -1,95 +1,111 @@
 <?php
+
     namespace F2P2;
+
+
+    if (!defined('LANG'))
+        define('LANG', 'en');
 
 
     /**
      * The class that handles the language and translation of the website
-     * 
-     * @link      link
-     * @since     Version 0.0
-     * @author    Thomas Baricault <thomas.baricault@gmail.com>
-     * @copyright Copyright (c) 2024, Thomas Baricault
-     * @license   https://opensource.org/license/bsd-2-clause
      */
     class Language
     {
-        static private string $language = DEFAULT_LANGUAGE;
-        static private array  $data     = [];
+
+        /**
+         * Current language used
+         */
+        private static string $lang = LANG;
+
+        /**
+         * Available languages
+         */
+        private static array $availables = [];
+
+        /**
+         * Default texts
+         */
+        private static array $defaults = [];
+
+        /**
+         * Current language texts
+         */
+        private static array $texts = [];
 
 
         /**
-         * Initialize the language data
-         * 
-         * @param  array $data The data (language => id => text)
-         * @return void
+         * Initializes the languages service
          */
-        static public function init(
-            array $data
-        ) : void
+        public static function init() : void
         {
-            if (isset($_SESSION['language']))
+            if (isset($_SESSION['lang']))
+                self::use($_SESSION['lang']);
+            else
+                self::$lang = LANG;
+            $path = 'lang/' . LANG . '.php';
+            if (file_exists($path))
+                self::$defaults = require($path);
+        }
+
+        /**
+         * Returns available languages
+         */
+        public static function availables() : array
+        {
+            return (self::$availables);
+        }
+
+        /**
+         * Returns the current language used
+         * 
+         * @return string Language used
+         */
+        public static function current() : string
+        {
+            return (self::$lang);
+        }
+
+        /**
+         * Sets the language to use
+         * 
+         * @param string $lang Language to use
+         */
+        public static function use(string $lang) : void
+        {
+            self::$lang = $lang;
+            if ($lang == LANG)
             {
-                self::$language = $_SESSION['language'];
-            }
-            self::$data = $data;
-        }
-
-        /**
-         * Returns the actual language used
-         * 
-         * @return string The language
-         */
-        static public function getLanguage() : string
-        {
-            return self::$language;
-        }
-
-        /**
-         * Defines the language to use
-         * 
-         * @param  string $language The language
-         * @return void
-         */
-        static public function setLanguage(
-            string $language
-        ) : void
-        {
-            self::$language = $language;
-            $_SESSION['language'] = $language;
-        }
-
-        /**
-         * Returns all the languages used
-         * 
-         * @return array An array of languages
-         */
-        static public function getAllLanguages() : array
-        {
-            return array_keys(self::$data);
-        }
-
-        /**
-         * Returns a text corresponding to the actual language
-         * 
-         * @param  string $id The id of the text
-         * @return string     The text
-         */
-        static public function getText(
-            string $id
-        ) : string
-        {
-            if (array_key_exists(self::$language, self::$data) && array_key_exists($id, self::$data[self::$language]))
-            {
-                return self::$data[self::$language][$id];
-            }
-            else if (array_key_exists(DEFAULT_LANGUAGE, self::$data) && array_key_exists($id, self::$data[DEFAULT_LANGUAGE]))
-            {
-                return self::$data[DEFAULT_LANGUAGE][$id];
+                unset($_SESSION['lang']);
+                self::$texts = [];
             }
             else
             {
-                return $id;
+                $_SESSION['lang'] = $lang;
+                $path = "lang/$lang.php";
+                if (file_exists($path))
+                    self::$texts = require($path);
+                else
+                    self::$texts = [];
             }
         }
+
+        /**
+         * Returns a text from its identifier
+         * 
+         * @param string $id Text identifier
+         * 
+         * @return string Corresponding text
+         */
+        public static function get(string $id) : string
+        {
+            if (self::$lang !== LANG && array_key_exists($id, self::$texts))
+                return (self::$texts[$id]);
+            if (array_key_exists($id, self::$defaults))
+                return (self::$defaults[$id]);
+            return ($id);
+        }
+
     }
+
 ?>

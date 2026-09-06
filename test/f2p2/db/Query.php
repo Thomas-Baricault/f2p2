@@ -14,11 +14,6 @@
          */
         protected string $table;
 
-        /**
-         * Prepare values
-         */
-        protected array $values = [];
-
 
         /**
          * Constructs a query
@@ -31,177 +26,242 @@
         }
 
         /**
-         * Sets the prepare values
-         * 
-         * @param array $values New values
-         * 
-         * @return Query Reference to this query
-         */
-        public function setValues(array $values) : Query
-        {
-            $this->values = $values;
-            return ($this);
-        }
-
-        /**
          * Executes the query
+         * 
+         * @param array $values Prepare values
          * 
          * @return array Query result
          */
-        abstract public function execute() : array;
+        abstract public function execute(array $values = []) : array;
 
     }
 
     /**
-     * Insert query class
+     * Insert query
      */
-    class QueryInsert extends Query
+    class InsertQuery extends Query
     {
 
-        public function execute() : array
+        public function execute(array $values = []) : array
         {
             $table = $this->table;
             $columns = [];
             $placeholders = [];
-            foreach ($this->values as $column => $_)
+            foreach ($values as $column => $_)
             {
                 $columns[] = $column;
                 $placeholders[] = ":$column";
             }
             $columns = implode(', ', $columns);
             $placeholders = implode(', ', $placeholders);
-            return \F2P2\Database::execute(
+            return (\F2P2\Database::execute(
                 "INSERT INTO $table ($columns) VALUES ($placeholders);",
-                $this->values
-            );
+                $values
+            ));
         }
 
     }
 
 
     /**
-     * Select query class
+     * Select query
      */
-    class QuerySelect extends Query
+    class SelectQuery extends Query
     {
-        private ?string $where   = null;
-        private ?array  $orderBy = null;
-        private ?array  $groupBy = null;
-        private ?int    $limit   = null;
-        private ?int    $offset  = null;
 
+        /**
+         * Whether results have to be distinct
+         */
+        private bool $distinct = false;
 
-        public function execute() : array
+        /**
+         * Where clause
+         */
+        private ?string $where = null;
+
+        /**
+         * Order by clause
+         */
+        private ?array $orderBy = null;
+
+        /**
+         * Group by clause
+         */
+        private ?array $groupBy = null;
+
+        /**
+         * Limit clause
+         */
+        private ?int $limit = null;
+
+        /**
+         * Offset clause
+         */
+        private ?int $offset = null;
+
+    
+        /**
+         * Sets whether results have to be distinct
+         * 
+         * @param bool $distinct `true` if distinct, `false` otherwise
+         * 
+         * @return SelectQuery Reference to this query
+         */
+
+        /**
+         * Sets the where clause
+         * 
+         * @param string $where Where clause
+         * 
+         * @return SelectQuery Reference to this query
+         */
+        public function where(string $where) : SelectQuery
+        {
+            $this->where = $where;
+            return ($this);
+        }
+
+        /**
+         * Sets the order by clause
+         * 
+         * @param  array $orderBy Columns to order by
+         * 
+         * @return SelectQuery Reference to this query
+         */
+        public function orderBy(array $orderBy) : SelectQuery
+        {
+            $this->orderBy = $orderBy;
+            return ($this);
+        }
+
+        /**
+         * Sets the group by clause
+         * 
+         * @param array $groupBy Columns to group by
+         * 
+         * @return SelectQuery Reference to this query
+         */
+        public function groupBy(array $groupBy) : SelectQuery
+        {
+            $this->groupBy = $groupBy;
+            return ($this);
+        }
+
+        /**
+         * Sets the limit clause
+         * 
+         * @param int $limit Limit
+         * 
+         * @return SelectQuery Reference to this query
+         */
+        public function limit(int $limit) : SelectQuery
+        {
+            $this->limit = $limit;
+            return ($this);
+        }
+
+        /**
+         * Sets the offset clause
+         * 
+         * @param int $offset Offset
+         * 
+         * @return SelectQuery Reference to this query
+         */
+        public function offset(int $offset) : SelectQuery
+        {
+            $this->offset = $offset;
+            return ($this);
+        }
+
+        public function execute(array $values = []) : array
         {
             $table = $this->table;
-            $where = $this->where ? 'WHERE '.$this->where : '';
+            $distinct = (
+                $this->distinct
+                    ? 'DISTINCT'
+                    : ''
+            );
+            $where = (
+                $this->where
+                    ? 'WHERE ' . $this->where
+                    : ''
+            );
             $orderBy = '';
             if ($this->orderBy)
             {
                 $orderBy = [];
                 foreach ($this->orderBy as $column => $order)
-                {
                     $orderBy[] = "$column $order";
-                }
-                $orderBy = 'ORDER BY '.implode(', ', $orderBy);
+                $orderBy = 'ORDER BY ' . implode(', ', $orderBy);
             }
-            $groupBy = $this->groupBy ? 'GROUP BY '.implode(', ', $this->groupBy) : '';
-            $limit = $this->limit ? 'LIMIT '.$this->limit : '';
-            $offset = $this->offset ? 'OFFSET '.$this->offset : '';
-            return \F2P2\Database::execute(
-                "SELECT * FROM $table $where $orderBy $groupBy $limit $offset;",
-                $this->values
+            $groupBy = (
+                $this->groupBy
+                    ? 'GROUP BY ' . implode(', ', $this->groupBy)
+                    : ''
             );
+            $limit = (
+                $this->limit
+                    ? 'LIMIT ' . $this->limit
+                    : ''
+            );
+            $offset = (
+                $this->offset
+                    ? 'OFFSET ' . $this->offset
+                    : ''
+            );
+            return (\F2P2\Database::execute(
+                "SELECT $distinct * FROM $table $where $orderBy $groupBy $limit $offset;",
+                $values
+            ));
         }
 
-        /**
-         * Defines the where clause
-         * 
-         * @param  string      $where The where clause
-         * @return QuerySelect        The query
-         */
-        public function setWhere(
-            string $where
-        ) : QuerySelect
-        {
-            $this->where = $where;
-            return $this;
-        }
-
-        /**
-         * Defines the order by clause
-         * 
-         * @param  array       $orderBy An array of columns
-         * @return QuerySelect          The query
-         */
-        public function setOrderBy(
-            array $orderBy
-        ) : QuerySelect
-        {
-            $this->orderBy = $orderBy;
-            return $this;
-        }
-
-        /**
-         * Defines the group by clause
-         * 
-         * @param  array       $groupBy An array of columns
-         * @return QuerySelect          The query
-         */
-        public function setGroupBy(
-            array $groupBy
-        ) : QuerySelect
-        {
-            $this->groupBy = $groupBy;
-            return $this;
-        }
-
-        /**
-         * Defines the limit clause
-         * 
-         * @param  int         $limit The limit
-         * @return QuerySelect        The query
-         */
-        public function setLimit(
-            int $limit
-        ) : QuerySelect
-        {
-            $this->limit = $limit;
-            return $this;
-        }
-
-        /**
-         * Defines the offset clause
-         * 
-         * @param  int         $offset The offset
-         * @return QuerySelect         The query
-         */
-        public function setOffset(
-            int $offset
-        ) : QuerySelect
-        {
-            $this->offset = $offset;
-            return $this;
-        }
     }
 
 
     /**
-     * The class that represent an update query
-     * 
-     * @link      link
-     * @since     Version 0.0
-     * @author    Thomas Baricault <thomas.baricault@gmail.com>
-     * @copyright Copyright (c) 2024, Thomas Baricault
-     * @license   https://opensource.org/license/bsd-2-clause
+     * Update query
      */
-    class QueryUpdate extends Query
+    class UpdateQuery extends Query
     {
-        private ?array  $update = null;
+
+        /**
+         * New modifications
+         */
+        private ?array $update = null;
+
+        /**
+         * Where clause
+         */
         private ?string $where  = null;
 
 
-        public function execute() : array
+        /**
+         * Sets update values
+         * 
+         * @param array $update Array of modifications (column => value)
+         * 
+         * @return UpdateQuery Reference to this query
+         */
+        public function update(array $update) : UpdateQuery
+        {
+            $this->update = $update;
+            return ($this);
+        }
+
+        /**
+         * Sets the where clause
+         * 
+         * @param string $where Where clause
+         * 
+         * @return UpdateQuery Reference to this query
+         */
+        public function where(string $where) : UpdateQuery
+        {
+            $this->where = $where;
+            return ($this);
+        }
+
+        public function execute(array $values = []) : array
         {
             $table = $this->table;
             $update = '';
@@ -209,84 +269,61 @@
             {
                 $update = [];
                 foreach ($this->update as $column => $value)
-                {
                     $update[] = "$column = $value";
-                }
-                $update = 'SET '.implode(', ', $update);
+                $update = 'SET ' . implode(', ', $update);
             }
-            $where = $this->where ? 'WHERE '.$this->where : '';
-            return \F2P2\Database::execute(
-                "UPDATE $table $update $where;",
-                $this->values
+            $where = (
+                $this->where
+                    ? 'WHERE ' . $this->where
+                    : ''
             );
+            return (\F2P2\Database::execute(
+                "UPDATE $table $update $where;",
+                $values
+            ));
         }
 
-        /**
-         * Defines the offset clause
-         * 
-         * @param  array       $update An array of modifications (column => value)
-         * @return QueryUpdate         The query
-         */
-        public function setUpdate(
-            array $update
-        ) : QueryUpdate
-        {
-            $this->update = $update;
-            return $this;
-        }
-
-        /**
-         * Defines the where clause
-         * 
-         * @param  string      $where The where clause
-         * @return QueryUpdate        The query
-         */
-        public function setWhere(
-            string $where
-        ) : QueryUpdate
-        {
-            $this->where = $where;
-            return $this;
-        }
     }
 
 
     /**
-     * The class that represent a delete query
-     * 
-     * @link      link
-     * @since     Version 0.0
-     * @author    Thomas Baricault <thomas.baricault@gmail.com>
-     * @copyright Copyright (c) 2024, Thomas Baricault
-     * @license   https://opensource.org/license/bsd-2-clause
+     * Delete query
      */
-    class QueryDelete extends Query
+    class DeleteQuery extends Query
     {
+
+        /**
+         * Where clause
+         */
         private ?string $where = null;
 
-
-        public function execute() : array
-        {
-            $table = $this->table;
-            $where = $this->where ? 'WHERE '.$this->where : '';
-            return \F2P2\Database::execute(
-                "DELETE FROM $table $where;",
-                $this->values
-            );
-        }
 
         /**
          * Defines the where clause
          * 
          * @param  string      $where The where clause
-         * @return QueryDelete        The query
+         * @return DeleteQuery        The query
          */
-        public function setWhere(
-            string $where
-        ) : QueryDelete
+        public function where(string $where) : DeleteQuery
         {
             $this->where = $where;
             return $this;
         }
+
+        public function execute(array $values = []) : array
+        {
+            $table = $this->table;
+            $where = (
+                $this->where
+                    ? 'WHERE ' . $this->where
+                    : ''
+            );
+            return (\F2P2\Database::execute(
+                "DELETE FROM $table $where;",
+                $values
+            ));
+        }
+
     }
+
 ?>

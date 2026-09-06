@@ -4,122 +4,151 @@
 
 
     /**
-     * The class that can generate and send an email
-     * 
-     * @link      link
-     * @since     Version 0.0
-     * @author    Thomas Baricault <thomas.baricault@gmail.com>
-     * @copyright Copyright (c) 2024, Thomas Baricault
-     * @license   https://opensource.org/license/bsd-2-clause
+     * Class that can generate and send an email
      */
-    class EMail
+    class Email
     {
 
-        private ?string $from_email = null;
-        private ?string $from_name  = null;
-        private array   $to         = [];
-        private string  $subject    = '';
-        private string  $message    = '';
-        private array   $headers    = [];
-        private bool    $isHTML     = false;
+        /**
+         * Sender email
+         */
+        private ?string $fromEmail = null;
+
+        /**
+         * Sender name
+         */
+        private ?string $fromName = null;
+
+        /**
+         * Email recipients
+         */
+        private array $to = [];
+
+        /**
+         * Email subject
+         */
+        private string $subject = '';
+
+        /**
+         * Email message
+         */
+        private string $message = '';
+
+        /**
+         * Email headers
+         */
+        private array $headers = [];
+
+        /**
+         * Whether content has to be interpreted as HTML
+         */
+        private bool $isHTML = false;
 
 
         /**
-         * Defines the sender of the email
-         * 
-         * @param  string  $email The email of the sender
-         * @param  ?string $name  The name of the sender
-         * @return EMail          The email
+         * Checks whether an email is syntaxically valid
          */
-        public function from(
-            string  $email,
-            ?string $name  = null
-        ) : EMail
+        public static function validate(string $email) : bool
         {
-            $this->from_email = $email;
-            $this->from_name = $name;
-            return $this;
+            $parts = explode('@', $email);
+            return (
+                filter_var($email, FILTER_VALIDATE_EMAIL) &&
+                count($parts) === 2 &&
+                checkdnsrr($parts[1])
+            );
         }
 
         /**
-         * Add a recipient to the mail
+         * Sets the sender of the email
          * 
-         * @param  string  $email The email of the recipient
-         * @param  ?string $name  The name of the recipient
-         * @return EMail          The email
+         * @param string $email Email of the sender
+         * @param ?string $name Name of the sender
+         * 
+         * @return Email Reference to this email
          */
-        public function to(
-            string  $email,
-            ?string $name  = null
-        ) : EMail
+        public function from(string $email, ?string $name = null) : Email
+        {
+            $this->fromEmail = $email;
+            $this->fromName = $name;
+            return ($this);
+        }
+
+        /**
+         * Add a recipient to the email
+         * 
+         * @param string $email Email of the recipient
+         * @param ?string $name Name of the recipient
+         * 
+         * @return Email Reference to this email
+         */
+        public function to(string $email, ?string $name = null) : Email
         {
             $this->to[$email] = $name;
-            return $this;
+            return ($this);
         }
 
         /**
-         * Defines the subject of the email
+         * Sets the subject of the email
          * 
-         * @param  string $subject The subject
-         * @return EMail           The email
+         * @param string $subject Email subject
+         * 
+         * @return Email Reference to this email
          */
-        public function subject(
-            string $subject
-        ) : EMail
+        public function subject(string $subject) : Email
         {
             $this->subject = $subject;
-            return $this;
+            return ($this);
         }
 
         /**
-         * Defines the message of the email
+         * Sets the message of the email
          * 
-         * @param  string $message The message
-         * @return EMail           The email
+         * @param string $message Email message
+         * 
+         * @return Email Reference to this email
          */
-        public function message(
-            string $message
-        ) : EMail
+        public function message(string $message) : Email
         {
             $this->message = $message;
-            return $this;
+            return ($this);
         }
 
         /**
          * Add a header to the email
          * 
-         * @param  string $name  The header name
-         * @param  string $value The header value
-         * @return EMail         The email
+         * @param string $name Header name
+         * @param string $value Header value
+         * 
+         * @return Email Reference to this email
          */
-        public function header(
-            string $name,
-            string $value
-        ) : EMail
+        public function header(string $name, string $value) : Email
         {
             $this->headers[$name] = $value;
-            return $this;
+            return ($this);
         }
 
         /**
          * Enable HTML for the email
          * 
-         * @param  string $message The message
-         * @return EMail           The email
+         * @return Email Reference to this email
          */
-        public function enableHTML() : EMail
+        public function enableHTML() : Email
         {
             $this->isHTML = true;
-            return $this;
+            return ($this);
         }
 
         /**
          * Send the email
          * 
-         * @return bool true if the email was sent successfully, otherwise false
+         * @return bool `true` if the email was sent successfully, `false` otherwise
+         * 
+         * @throws \Exception If no recipient has been defined
          */
         public function send() : bool
         {
+            if (count($this->to) === 0)
+                throw new \Exception("Cannot send email with no recipient");
             $headers = $this->headers;
             if ($this->isHTML)
             {
@@ -130,20 +159,32 @@
             {
                 $headers['Content-Type'] = 'text/plain; charset=utf-8';
             }
-            if ($this->from_email)
+            if ($this->fromEmail)
             {
-                $headers['From'] = $this->from_name ? $this->from_name.' <'.$this->from_email.'>' : $this->from_email;
+                $headers['From'] = (
+                    $this->fromName
+                        ? $this->fromName . ' <' . $this->fromEmail . '>'
+                        : $this->fromEmail
+                );
             }
-            if (count($this->to) > 0)
+            $to = [];
+            foreach ($this->to as $email => $name)
             {
-                $to = [];
-                foreach ($this->to as $email => $name)
-                {
-                    $to[] = $name ? $name.' <'.$email.'>' : $email;
-                }
-                $headers['To'] = implode(', ', $to);
+                $to[] = (
+                    $name
+                        ? $name . ' <' . $email . '>'
+                        : $email
+                );
             }
-            return mail(implode(', ', array_keys($this->to)), $this->subject, $this->message, $headers);
+            $headers['To'] = implode(', ', $to);
+            return (mail(
+                implode(', ', array_keys($this->to)),
+                $this->subject,
+                $this->message,
+                $headers
+            ));
         }
+
     }
+
 ?>

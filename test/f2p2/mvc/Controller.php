@@ -6,7 +6,7 @@
     /**
      * Abstract base class for controllers
      */
-    abstract class BaseController
+    abstract class Controller
     {
     }
 
