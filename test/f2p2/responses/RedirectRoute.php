@@ -3,6 +3,10 @@
     namespace f2p2\responses;
 
 
+    require_once('f2p2/mvc/View.php');
+    require_once('f2p2/responses/RedirectURL.php');
+
+
     /**
      * Class for responses that are redirections to route
      */

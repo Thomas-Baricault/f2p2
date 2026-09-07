@@ -4,7 +4,7 @@
 
 
     if (!defined('LANG'))
-        define('LANG', 'en');
+        define('LANG', 'fr');
 
 
     /**
@@ -12,11 +12,6 @@
      */
     final class Language
     {
-
-        /**
-         * Current language used
-         */
-        private static string $lang = LANG;
 
         /**
          * Available languages
@@ -39,13 +34,63 @@
          */
         public static function init(): void
         {
+            foreach (scandir('lang') as $entry)
+                if ($entry !== '.' && $entry !== '..' && str_ends_with($entry, '.php'))
+                    self::$availables[] = substr($entry, 0, -4);
+            if (self::available(LANG))
+                self::$defaults = require_once('lang/' . LANG . '.php');
             if (isset($_SESSION['lang']))
                 self::use($_SESSION['lang']);
             else
-                self::$lang = LANG;
-            $path = 'lang/' . LANG . '.php';
-            if (file_exists($path))
-                self::$defaults = require($path);
+            {
+                $langs = [];
+                foreach (explode(',', $_SERVER['HTTP_ACCEPT_LANGUAGE']) as $index => $entry)
+                {
+                    $parts = explode(';', $entry);
+                    $count = count($parts);
+                    if ($count < 1 || $count > 2)
+                        continue;
+                    $length = strlen($parts[0]);
+                    if (!($length === 2 || $length === 5 && $parts[0][2] === '-'))
+                        continue;
+                    $q = 1;
+                    if ($count === 2)
+                    {
+                        if (str_starts_with($parts[1], 'q='))
+                            $q = filter_var(substr($parts[1], 2), FILTER_VALIDATE_FLOAT);
+                        else
+                            continue;
+                        if ($q === false || $q < 0 || $q > 1)
+                            continue;
+                    }
+                    $langs[] = [$index, $parts[0], $q];
+                }
+                usort($langs, static function ($a, $b) {
+                    return (
+                        $a[2] === $b[2]
+                            ? $a[0] <=> $b[0]
+                            : $a[2] <=> $b[2]
+                    );
+                });
+                foreach ($langs as $lang)
+                {
+                    if (self::available($lang[1]))
+                        self::use($lang[1]);
+                    else if (strlen($lang[1]) === 5 && self::available(substr($lang[1], 0, 2)))
+                        self::use(substr($lang[1], 0, 2));
+                    else
+                        continue;
+                    break;
+                }
+            }
+        }
+
+        /**
+         * Checks whether a language is available
+         */
+        public static function available(string $lang): bool
+        {
+            return (in_array($lang, self::$availables));
         }
 
         /**
@@ -63,7 +108,11 @@
          */
         public static function current(): string
         {
-            return (self::$lang);
+            return (
+                isset($_SESSION['lang'])
+                    ? $_SESSION['lang']
+                    : LANG
+            );
         }
 
         /**
@@ -73,18 +122,11 @@
          */
         public static function use(string $lang): void
         {
-            self::$lang = $lang;
-            if ($lang == LANG)
-            {
-                unset($_SESSION['lang']);
-                self::$texts = [];
-            }
-            else
+            if (!isset($_SESSION['lang']) || $lang !== $_SESSION['lang'])
             {
                 $_SESSION['lang'] = $lang;
-                $path = "lang/$lang.php";
-                if (file_exists($path))
-                    self::$texts = require($path);
+                if ($lang !== LANG && self::available($lang))
+                    self::$texts = require_once("lang/$lang.php");
                 else
                     self::$texts = [];
             }
@@ -99,7 +141,7 @@
          */
         public static function get(string $id): string
         {
-            if (self::$lang !== LANG && array_key_exists($id, self::$texts))
+            if (isset($_SESSION['lang']) && $_SESSION['lang'] !== LANG && array_key_exists($id, self::$texts))
                 return (self::$texts[$id]);
             if (array_key_exists($id, self::$defaults))
                 return (self::$defaults[$id]);

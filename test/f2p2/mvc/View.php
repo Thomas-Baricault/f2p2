@@ -3,6 +3,10 @@
     namespace f2p2;
 
 
+    require_once('f2p2/routing/Router.php');
+    require_once('f2p2/utils/Server.php');
+
+
     /**
      * An useful class for views
      */
@@ -83,7 +87,7 @@
          */
         public static function route(string $name, array $params = [], array $get = []): string
         {
-            return (\f2p2\Server::baseURL() . \f2p2\Router::getRoute($name)->computeURI($params, $get));
+            return (\f2p2\Server::baseURL() . \f2p2\routing\Router::getRoute($name)->computeURI($params, $get));
         }
 
     }

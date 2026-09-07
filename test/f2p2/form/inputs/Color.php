@@ -3,7 +3,8 @@
     namespace f2p2\form\inputs;
 
 
-    use Override;
+    require_once('f2p2/form/inputs/Input.php');
+    require_once('f2p2/utils/regex.php');
 
 
     class Color extends \f2p2\form\inputs\Input
@@ -12,14 +13,13 @@
         public const TYPE = 'color';
 
 
-        #[Override]
         public function __construct()
         {
             parent::__construct();
             $this->required();
         }
 
-        #[Override]
+        #[\Override]
         public function validate(): bool
         {
             return (

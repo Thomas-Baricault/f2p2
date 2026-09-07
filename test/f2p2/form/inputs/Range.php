@@ -3,21 +3,13 @@
     namespace f2p2\form\inputs;
 
 
-    use Override;
+    require_once('f2p2/form/inputs/Number.php');
 
 
     class Range extends \f2p2\form\inputs\Number
     {
 
         public const TYPE = 'range';
-
-
-        #[Override]
-        public function __construct()
-        {
-            parent::__construct();
-            $this->required();
-        }
 
     }
 

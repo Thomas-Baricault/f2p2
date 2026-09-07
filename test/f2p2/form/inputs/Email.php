@@ -3,7 +3,7 @@
     namespace f2p2\form\inputs;
 
 
-    use Override;
+    require_once('f2p2/form/inputs/Text.php');
 
 
     class Email extends \f2p2\form\inputs\Text
@@ -12,7 +12,7 @@
         public const TYPE = 'email';
 
 
-        #[Override]
+        #[\Override]
         public function validate(): bool
         {
             if (!parent::validate())

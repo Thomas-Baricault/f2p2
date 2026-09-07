@@ -1,5 +1,6 @@
 better where clause
 sql joins
-auto-determine language
 input checkbox/radio
 rework request and response
+doc
+captcha

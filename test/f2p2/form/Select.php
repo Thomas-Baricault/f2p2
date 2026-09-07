@@ -3,7 +3,8 @@
     namespace f2p2\form;
 
 
-    use Override;
+    require_once('f2p2/form/Field.php');
+    require_once('f2p2/form/Option.php');
 
 
     class Select extends \f2p2\form\Field
@@ -12,7 +13,7 @@
         private array $options = [];
 
 
-        #[Override]
+        #[\Override]
         public function name(string $value): Select
         {
             return (
@@ -55,7 +56,7 @@
             return ($this);
         }
 
-        #[Override]
+        #[\Override]
         public function dump(): array
         {
             if (!isset($this->attrs['name']))
@@ -81,7 +82,7 @@
             return ([$this->attrs['name'] => $value]);
         }
 
-        #[Override]
+        #[\Override]
         public function fill(array $data): void
         {
             if (isset($this->attrs['name']) && isset($data[$this->attrs['name']]))
@@ -96,7 +97,7 @@
             }
         }
 
-        #[Override]
+        #[\Override]
         public function validate(): bool
         {
             if (!isset($this->attrs['required']))
@@ -110,7 +111,7 @@
             return ($n === 1);
         }
 
-        #[Override]
+        #[\Override]
         public function renderContent(): string
         {
             $html = '';

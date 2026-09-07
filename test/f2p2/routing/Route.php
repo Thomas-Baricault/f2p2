@@ -3,6 +3,9 @@
     namespace f2p2\routing;
 
 
+    require_once('f2p2/requests/Request.php');
+
+
     final class Route
     {
 

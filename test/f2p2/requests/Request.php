@@ -3,6 +3,10 @@
     namespace f2p2\requests;
 
 
+    require_once('f2p2/requests/File.php');
+    require_once('f2p2/utils/Server.php');
+
+
     /**
      * HTTP request
      */

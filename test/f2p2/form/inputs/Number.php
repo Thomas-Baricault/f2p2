@@ -3,7 +3,7 @@
     namespace f2p2\form\inputs;
 
 
-    use Override;
+    require_once('f2p2/form/inputs/Input.php');
 
 
     class Number extends \f2p2\form\inputs\Input
@@ -32,7 +32,7 @@
             return ($this);
         }
 
-        #[Override]
+        #[\Override]
         public function validate(): bool
         {
             if (!parent::validate())

@@ -3,7 +3,8 @@
     namespace f2p2\form;
 
 
-    use Override;
+    require_once('f2p2/form/FormComponent.php');
+    require_once('f2p2/form/Label.php');
 
 
     abstract class Field extends \f2p2\form\FormComponent
@@ -12,7 +13,7 @@
         private ?\f2p2\form\Label $label = null;
 
 
-        #[Override]
+        #[\Override]
         public function id(string $value): Field
         {
             if ($this->label)
@@ -44,7 +45,7 @@
             return ($this);
         }
 
-        #[Override]
+        #[\Override]
         public function render(): string
         {
             return (

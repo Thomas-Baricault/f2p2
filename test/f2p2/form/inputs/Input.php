@@ -3,7 +3,8 @@
     namespace f2p2\form\inputs;
 
 
-    use Override;
+    require_once('f2p2/form/Field.php');
+    require_once('f2p2/utils/Component.php');
 
 
     abstract class Input extends \f2p2\form\Field
@@ -11,7 +12,7 @@
 
         public const NAME = 'input';
 
-        public const CLOSE_POLICY = \f2p2\utils\ClosePolicy::NoClose;
+        public const CLOSE = false;
 
         public const TYPE = '';
 
@@ -27,7 +28,7 @@
             return ($this);
         }
 
-        #[Override]
+        #[\Override]
         public function dump(): array
         {
             if (!isset($this->attrs['name']))
@@ -41,14 +42,14 @@
             ]);
         }
 
-        #[Override]
+        #[\Override]
         public function fill(array $data): void
         {
             if (isset($this->attrs['name']) && isset($data[$this->attrs['name']]))
                 $this->attrs['value'] = $data[$this->attrs['name']];
         }
 
-        #[Override]
+        #[\Override]
         public function validate(): bool
         {
             return (!isset($this->attrs['required']) || isset($this->attrs['value']));

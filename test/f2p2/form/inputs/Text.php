@@ -3,7 +3,7 @@
     namespace f2p2\form\inputs;
 
 
-    use Override;
+    require_once('f2p2/form/inputs/Input.php');
 
 
     class Text extends \f2p2\form\inputs\Input
@@ -28,7 +28,7 @@
         {
             $this->attrs['pattern'] = (
                 $value[0] === '/' && $value[-1] === '/'
-                    ? substr($value, 1, strlen($value) - 2)
+                    ? substr($value, 1, -1)
                     : $value
             );
             return ($this);
@@ -40,7 +40,7 @@
             return ($this);
         }
 
-        #[Override]
+        #[\Override]
         public function validate(): bool
         {
             if (!parent::validate())

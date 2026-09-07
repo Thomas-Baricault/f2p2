@@ -7,13 +7,14 @@
     require_once('f2p2/db/queries/Update.php');
     require_once('f2p2/db/Database.php');
 
+    require_once('f2p2/form/inputs/Input.php');
+    require_once('f2p2/form/inputs/Text.php');
     require_once('f2p2/form/inputs/Color.php');
     require_once('f2p2/form/inputs/Date.php');
     require_once('f2p2/form/inputs/DatetimeLocal.php');
     require_once('f2p2/form/inputs/Email.php');
     require_once('f2p2/form/inputs/File.php');
     require_once('f2p2/form/inputs/Hidden.php');
-    require_once('f2p2/form/inputs/Input.php');
     require_once('f2p2/form/inputs/Month.php');
     require_once('f2p2/form/inputs/Number.php');
     require_once('f2p2/form/inputs/Password.php');
@@ -21,7 +22,6 @@
     require_once('f2p2/form/inputs/Search.php');
     require_once('f2p2/form/inputs/Submit.php');
     require_once('f2p2/form/inputs/Tel.php');
-    require_once('f2p2/form/inputs/Text.php');
     require_once('f2p2/form/inputs/Time.php');
     require_once('f2p2/form/inputs/URL.php');
     require_once('f2p2/form/inputs/Week.php');

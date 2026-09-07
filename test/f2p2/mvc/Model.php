@@ -3,6 +3,12 @@
     namespace f2p2;
 
 
+    require_once('f2p2/db/queries/Delete.php');
+    require_once('f2p2/db/queries/Insert.php');
+    require_once('f2p2/db/queries/Select.php');
+    require_once('f2p2/db/queries/Update.php');
+
+
     /**
      * Abstract base class for models
      */

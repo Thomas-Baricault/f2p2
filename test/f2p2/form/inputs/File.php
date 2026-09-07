@@ -3,7 +3,7 @@
     namespace f2p2\form\inputs;
 
 
-    use Override;
+    require_once('f2p2/form/inputs/Input.php');
 
 
     class File extends \f2p2\form\inputs\Input
@@ -37,7 +37,7 @@
             return ($this);
         }
 
-        #[Override]
+        #[\Override]
         public function dump(): array
         {
             if (!isset($this->attrs['name']))
@@ -54,7 +54,7 @@
             ]);
         }
 
-        #[Override]
+        #[\Override]
         public function fill(array $data): void
         {
             if (isset($this->attrs['name']) && isset($data[$this->attrs['name']]))
@@ -67,7 +67,7 @@
             }
         }
 
-        #[Override]
+        #[\Override]
         public function validate(): bool
         {
             if (

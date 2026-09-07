@@ -3,6 +3,9 @@
     namespace f2p2\responses;
 
 
+    require_once('f2p2/responses/Response.php');
+
+
     /**
      * Class for responses that are redirections to URL
      */

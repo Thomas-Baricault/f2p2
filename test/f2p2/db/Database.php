@@ -3,6 +3,22 @@
     namespace f2p2\db;
 
 
+    if (!defined('DB_TYPE'))
+        define('DB_TYPE', 'mysql');
+
+    if (!defined('DB_HOST'))
+        define('DB_HOST', 'localhost');
+
+    if (!defined('DB_NAME'))
+        define('DB_NAME', 'db');
+
+    if (!defined('DB_USER'))
+        define('DB_USER', 'root');
+
+    if (!defined('DB_PASS'))
+        define('DB_PASS', '');
+
+
     /**
      * Singleton database interface
      */
@@ -33,17 +49,17 @@
                     {
                         case 'sqlite':
                         {
-                            self::$pdo = new \PDO(DB_TYPE.':'.DB_NAME);
+                            self::$pdo = new \PDO(DB_TYPE . ':' . DB_NAME);
                             break;
                         }
                         case 'oci':
                         {
-                            self::$pdo = new \PDO(DB_TYPE.'dbname='.DB_NAME, DB_USER, DB_PASS);
+                            self::$pdo = new \PDO(DB_TYPE . 'dbname=' . DB_NAME, DB_USER, DB_PASS);
                             break;
                         }
                         default:
                         {
-                            self::$pdo = new \PDO(DB_TYPE.':host='.DB_HOST.';dbname='.DB_NAME, DB_USER, DB_PASS);
+                            self::$pdo = new \PDO(DB_TYPE . ':host=' . DB_HOST . ';dbname=' . DB_NAME, DB_USER, DB_PASS);
                             break;
                         }
                     }

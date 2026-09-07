@@ -3,7 +3,8 @@
     namespace f2p2\db\queries;
 
 
-    use Override;
+    require_once('f2p2/db/Database.php');
+    require_once('f2p2/db/queries/Query.php');
 
 
     /**
@@ -49,7 +50,7 @@
             return ($this);
         }
 
-        #[Override]
+        #[\Override]
         public function execute(array $values = []): array
         {
             $table = $this->table;

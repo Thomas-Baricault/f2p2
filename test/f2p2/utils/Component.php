@@ -1,16 +1,6 @@
 <?php
 
-    namespace f2p2\utils;
-
-
-    enum ClosePolicy
-    {
-
-        case AutoClose;
-        case NeedClose;
-        case NoClose;
-
-    }
+    namespace f2p2;
 
 
     abstract class Component
@@ -18,7 +8,7 @@
 
         public const NAME = '';
 
-        public const CLOSE_POLICY = ClosePolicy::NeedClose;
+        public const CLOSE = true;
 
         protected array $attrs = [];
 
@@ -55,19 +45,19 @@
             $html = '<' . get_class($this)::NAME;
             foreach ($this->attrs as $key => $value)
                 $html .= " $key=\"$value\"";
-            switch (get_class($this)::CLOSE_POLICY)
+            switch (get_class($this)::CLOSE)
             {
-                case ClosePolicy::AutoClose:
+                case null:
                 {
                     $html .= '/>';
                     break;
                 }
-                case ClosePolicy::NeedClose:
+                case true:
                 {
                     $html .= '>' . $this->renderContent() . '</' . get_class($this)::NAME . '>';
                     break;
                 }
-                case ClosePolicy::NoClose:
+                case false:
                 {
                     $html .= '>';
                     break;

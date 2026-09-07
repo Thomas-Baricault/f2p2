@@ -3,7 +3,10 @@
     namespace f2p2\form;
 
 
-    final class Label extends \f2p2\utils\Component
+    require_once('f2p2/utils/Component.php');
+
+
+    final class Label extends \f2p2\Component
     {
 
         public const NAME = 'label';

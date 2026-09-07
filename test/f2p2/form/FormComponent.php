@@ -3,7 +3,10 @@
     namespace f2p2\form;
 
 
-    abstract class FormComponent extends \f2p2\utils\Component
+    require_once('f2p2/utils/Component.php');
+
+
+    abstract class FormComponent extends \f2p2\Component
     {
 
         abstract public function dump(): array;

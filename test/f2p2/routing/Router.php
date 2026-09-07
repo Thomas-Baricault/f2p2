@@ -3,6 +3,10 @@
     namespace f2p2\routing;
 
 
+    require_once('f2p2/requests/Request.php');
+    require_once('f2p2/routing/Route.php');
+
+
     /**
      * Class that manages and executes routes
      */

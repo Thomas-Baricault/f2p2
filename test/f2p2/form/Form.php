@@ -3,6 +3,10 @@
     namespace f2p2\form;
 
 
+    require_once('f2p2/form/FieldContainer.php');
+    require_once('f2p2/mvc/View.php');
+
+
     class Form extends \f2p2\form\FieldContainer
     {
 
