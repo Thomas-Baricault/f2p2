@@ -1,6 +1,6 @@
 <?php
 
-    namespace F2P2;
+    namespace f2p2\requests;
 
 
     /**
@@ -100,24 +100,23 @@
          * 
          * @return Request Resulting request
          */
-        public static function current() : Request
+        public static function current(): Request
         {
             $request = (new Request())
-                ->setUrl(\F2P2\Server::currentURI())
-                ->setMethod(\F2P2\Server::requestMethod())
-                ->setPort(\F2P2\Server::serverPort())
+                ->setUrl(\f2p2\Server::currentURI())
+                ->setMethod(\f2p2\Server::requestMethod())
+                ->setPort(\f2p2\Server::serverPort())
                 ->setHeaders(getallheaders())
                 ->setArguments(
-                    \F2P2\Server::requestMethod() === 'GET'
+                    \f2p2\Server::requestMethod() === 'GET'
                         ? $_GET
                         : (
-                            \F2P2\Server::requestMethod() === 'POST'
+                            \f2p2\Server::requestMethod() === 'POST'
                                 ? $_POST
                                 : []
                         )
                 );
-            foreach ($_FILES as $name => $file)
-                $request->addFile($file['tmp_name'], null, $file['type'], $name);
+            $request->files = \f2p2\requests\File::currents();
             return ($request);
         }
 
@@ -126,7 +125,7 @@
          * 
          * @return string Error if there is one, `null` otherwise
          */
-        public function getError() : ?string
+        public function getError(): ?string
         {
             return ($this->error);
         }
@@ -136,7 +135,7 @@
          * 
          * @return string Request url
          */
-        public function getURL() : ?string
+        public function getURL(): ?string
         {
             return ($this->url);
         }
@@ -146,7 +145,7 @@
          * 
          * @return string Request method
          */
-        public function getMethod() : string
+        public function getMethod(): string
         {
             return ($this->method);
         }
@@ -156,7 +155,7 @@
          * 
          * @return int Request port
          */
-        public function getPort() : int
+        public function getPort(): int
         {
             return ($this->port);
         }
@@ -166,7 +165,7 @@
          * 
          * @return array Request headers (name => value)
          */
-        public function getHeaders() : array
+        public function getHeaders(): array
         {
             return ($this->headers);
         }
@@ -178,7 +177,7 @@
          * 
          * @return ?string Header value if exists, `null` otherwise
          */
-        public function getHeader(string $name) : ?string
+        public function getHeader(string $name): ?string
         {
             return (
                 array_key_exists($name, $this->headers)
@@ -192,7 +191,7 @@
          * 
          * @return array Request arguments
          */
-        public function getArguments() : array
+        public function getArguments(): array
         {
             return ($this->args);
         }
@@ -204,7 +203,7 @@
          * 
          * @return ?string Argument value if exists, `null` otherwise
          */
-        public function getArgument(string $name) : ?string
+        public function getArgument(string $name): ?string
         {
             return (
                 array_key_exists($name, $this->args)
@@ -218,7 +217,7 @@
          * 
          * @return array Request files
          */
-        public function getFiles() : array
+        public function getFiles(): array
         {
             return ($this->files);
         }
@@ -227,12 +226,13 @@
          * Returns a request file
          * 
          * @param string $name File name
-         * @return ?string File if exists, `null` otherwise
+         * 
+         * @return ?\f2p2\requests\File File if exists, `null` otherwise
          */
-        public function getFile(string $name) : ?string
+        public function getFile(string $name): ?\f2p2\requests\File
         {
             return (
-                array_key_exists($name, $this->files)
+                isset($this->files[$name])
                     ? $this->files[$name]
                     : null
             );
@@ -243,7 +243,7 @@
          * 
          * @return array Request data
          */
-        public function getData() : array
+        public function getData(): array
         {
             return (array_merge($this->args, $this->files));
         }
@@ -255,7 +255,7 @@
          * 
          * @return Request Reference to this request
          */
-        public function setURL(string $url) : Request
+        public function setURL(string $url): Request
         {
             $this->url = $url;
             return ($this);
@@ -268,7 +268,7 @@
          * 
          * @return Request Reference to this request
          */
-        public function setMethod(string $method) : Request
+        public function setMethod(string $method): Request
         {
             $this->method = $method;
             return ($this);
@@ -281,7 +281,7 @@
          * 
          * @return Request reference to this request
          */
-        public function setPort(int $port) : Request
+        public function setPort(int $port): Request
         {
             $this->port = $port;
             return ($this);
@@ -294,7 +294,7 @@
          * 
          * @return Request Reference to this request
          */
-        public function setHeaders(array $headers) : Request
+        public function setHeaders(array $headers): Request
         {
             foreach ($headers as $name => $value)
                 $this->setHeader($name, $value);
@@ -309,7 +309,7 @@
          * 
          * @return Request Reference to this request
          */
-        public function setHeader(string $name, string|array $value) : Request
+        public function setHeader(string $name, string|array $value): Request
         {
             $this->headers[$name] = (
                 is_array($value)
@@ -326,7 +326,7 @@
          * 
          * @return Request Reference to this request
          */
-        public function setArguments(array $args) : Request
+        public function setArguments(array $args): Request
         {
             foreach ($args as $name => $value)
                 $this->setArgument($name, $value);
@@ -341,7 +341,7 @@
          * 
          * @return Request Reference to this request
          */
-        public function setArgument(string $name, string $value) : Request
+        public function setArgument(string $name, string $value): Request
         {
             $this->args[$name] = $value;
             return ($this);
@@ -354,7 +354,7 @@
          * 
          * @return Request Reference to this request
          */
-        public function setTimeout(int $timeout) : Request
+        public function setTimeout(int $timeout): Request
         {
             $this->timeout = $timeout;
             return ($this);
@@ -368,7 +368,7 @@
          * 
          * @return Request Reference to this request
          */
-        public function setTransferMinSpeed(int $speed, ?int $time = null) : Request
+        public function setTransferMinSpeed(int $speed, ?int $time = null): Request
         {
             $this->transferMinSpeed = $speed;
             $this->transferMinTime = $time;
@@ -382,7 +382,7 @@
          * 
          * @return Request Reference to this request
          */
-        public function setTransferResume(int $position) : Request
+        public function setTransferResume(int $position): Request
         {
             $this->transferResume = $position;
             return ($this);
@@ -395,7 +395,7 @@
          * 
          * @return Request Reference to this request
          */
-        public function setDownloadMaxSpeed(int $speed) : Request
+        public function setDownloadMaxSpeed(int $speed): Request
         {
             $this->downloadMaxSpeed = $speed;
             return ($this);
@@ -408,7 +408,7 @@
          * 
          * @return Request Reference to this request
          */
-        public function setDownloadMaxSize(int $size) : Request
+        public function setDownloadMaxSize(int $size): Request
         {
             $this->downloadMaxSize = $size;
             return ($this);
@@ -421,7 +421,7 @@
          * 
          * @return Request Reference to this request
          */
-        public function setDownloadPath(string $path) : Request
+        public function setDownloadPath(string $path): Request
         {
             $this->downloadPath = $path;
             return ($this);
@@ -434,7 +434,7 @@
          * 
          * @return Request Reference to this request
          */
-        public function setUploadMaxSpeed(int $speed) : Request
+        public function setUploadMaxSpeed(int $speed): Request
         {
             $this->uploadMaxSpeed = $speed;
             return ($this);
@@ -447,7 +447,7 @@
          * 
          * @return Request Reference to this request
          */
-        public function setUploadSize(int $size) : Request
+        public function setUploadSize(int $size): Request
         {
             $this->uploadSize = $size;
             return ($this);
@@ -460,7 +460,7 @@
          * 
          * @return Request Reference to this request
          */
-        public function setUploadPath(string $path) : Request
+        public function setUploadPath(string $path): Request
         {
             $this->uploadPath = $path;
             return ($this);
@@ -476,7 +476,7 @@
          * 
          * @return Request Reference to this request
          */
-        public function addFile(?string $path, ?string $content, ?string $mime, ?string $name) : Request
+        public function addFile(?string $path, ?string $content, ?string $mime, ?string $name): Request
         {
             $this->files[] = (
                 $path
@@ -489,11 +489,11 @@
         /**
          * Send the request
          * 
-         * @return ?\F2P2\Response Response received if success, `null` otherwise
+         * @return ?\f2p2\responses\Response Response received if success, `null` otherwise
          * 
          * @throws \Exception If URL is not defined
          */
-        public function send() : ?\F2P2\Response
+        public function send(): ?\f2p2\responses\Response
         {
             if ($this->url === null)
                 throw new \Exception('Cannot send the request because URL is not defined');
@@ -551,7 +551,7 @@
             {
                 $this->error = null;
                 $headerSize = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
-                $response = (new \F2P2\Response())
+                $response = (new \f2p2\responses\Response())
                     ->setCode(curl_getinfo($curl, CURLINFO_HTTP_CODE))
                     ->setBody(substr($responseTXT, $headerSize));
                 foreach (explode("\n", substr($responseTXT, 0, $headerSize)) as $header)

@@ -1,6 +1,6 @@
 <?php
 
-    namespace F2P2;
+    namespace f2p2;
 
 
     if (!defined('LANG'))
@@ -10,7 +10,7 @@
     /**
      * The class that handles the language and translation of the website
      */
-    class Language
+    final class Language
     {
 
         /**
@@ -37,7 +37,7 @@
         /**
          * Initializes the languages service
          */
-        public static function init() : void
+        public static function init(): void
         {
             if (isset($_SESSION['lang']))
                 self::use($_SESSION['lang']);
@@ -51,7 +51,7 @@
         /**
          * Returns available languages
          */
-        public static function availables() : array
+        public static function availables(): array
         {
             return (self::$availables);
         }
@@ -61,7 +61,7 @@
          * 
          * @return string Language used
          */
-        public static function current() : string
+        public static function current(): string
         {
             return (self::$lang);
         }
@@ -71,7 +71,7 @@
          * 
          * @param string $lang Language to use
          */
-        public static function use(string $lang) : void
+        public static function use(string $lang): void
         {
             self::$lang = $lang;
             if ($lang == LANG)
@@ -97,7 +97,7 @@
          * 
          * @return string Corresponding text
          */
-        public static function get(string $id) : string
+        public static function get(string $id): string
         {
             if (self::$lang !== LANG && array_key_exists($id, self::$texts))
                 return (self::$texts[$id]);

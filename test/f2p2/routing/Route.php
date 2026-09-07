@@ -1,9 +1,9 @@
 <?php
 
-    namespace F2P2;
+    namespace f2p2\routing;
 
 
-    class Route
+    final class Route
     {
 
         /**
@@ -44,7 +44,7 @@
          * 
          * @return array URI components
          */
-        public static function sanitizeURI(string $uri) : array
+        public static function sanitizeURI(string $uri): array
         {
             $length = strlen($uri);
             $hasBeginSlash = $length > 0 && $uri[0] === '/';
@@ -64,7 +64,7 @@
          * 
          * @return Route Reference to this route
          */
-        public function uri(string $uri) : Route
+        public function uri(string $uri): Route
         {
             $this->uri = self::sanitizeURI($uri);
             return ($this);
@@ -77,7 +77,7 @@
          * 
          * @return Route Reference to this route
          */
-        public function method(string $method) : Route
+        public function method(string $method): Route
         {
             $this->method = $method;
             return ($this);
@@ -91,7 +91,7 @@
          * 
          * @return Route Reference to this route
          */
-        public function action(string $controller, string $action) : Route
+        public function action(string $controller, string $action): Route
         {
             $this->controller = $controller;
             $this->action = $action;
@@ -105,7 +105,7 @@
          * 
          * @return Route Reference to this route
          */
-        public function auth(array $permissions = []) : Route
+        public function auth(array $permissions = []): Route
         {
             $this->auth = true;
             $this->permissions = $permissions;
@@ -120,7 +120,7 @@
          * 
          * @return string Resulting URI
          */
-        public function computeURI(array $params = [], array $get = []) : string
+        public function computeURI(array $params = [], array $get = []): string
         {
             $uri = '';
             foreach ($this->$uri as $arg)
@@ -148,14 +148,14 @@
         /**
          * Runs the route for a request
          * 
-         * @param \F2P2\Request $request Request to run
+         * @param \f2p2\requests\Request $request Request to run
          * @param ?array &$sanitizedURI Cached sanitized request URI
          * 
          * @return int Response status code or 404 if request doesn't correspond to the route
          * 
          * @throws \Exception If the route is not correctly configured
          */
-        public function run(\F2P2\Request $request, ?array &$sanitizedURI = null) : int
+        public function run(\f2p2\requests\Request $request, ?array &$sanitizedURI = null): int
         {
             if ($this->uri === null || $this->method === null || $this->controller === null || $this->action === null)
                 throw new \Exception('Route not correctly configured');
@@ -189,10 +189,10 @@
         /**
          * Call the route action
          * 
-         * @param \F2P2\Request $request Request to call for
+         * @param \f2p2\requests\Request $request Request to call for
          * @param array $params Call parameters
          */
-        public function call(\F2P2\Request $request, array $params = []) : void
+        public function call(\f2p2\requests\Request $request, array $params = []): void
         {
             require_once("app/controllers/{$this->controller}Controller.php");
             ((new ("\\App\\{$this->controller}Controller")())->{$this->action}($request, $params))->send();

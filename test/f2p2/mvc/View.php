@@ -1,6 +1,6 @@
 <?php
 
-    namespace F2P2;
+    namespace f2p2;
 
 
     /**
@@ -17,7 +17,7 @@
          * 
          * @return string HTML result
          */
-        public static function render(string $name, array $params = []) : string
+        public static function render(string $name, array $params = []): string
         {
             ob_start();
             require('app/views/' . $name);
@@ -31,9 +31,9 @@
          * 
          * @return string Resulting URL
          */
-        public static function asset(string $path) : string
+        public static function asset(string $path): string
         {
-            return (\F2P2\Server::baseURL() . '/' . $path);
+            return (\f2p2\Server::baseURL() . '/' . $path);
         }
 
         /**
@@ -43,7 +43,7 @@
          * 
          * @return string Resulting URL
          */
-        public static function css(string $path) : string
+        public static function css(string $path): string
         {
             return (self::asset("css/$path"));
         }
@@ -55,7 +55,7 @@
          * 
          * @return string Resulting URL
          */
-        public static function js(string $path) : string
+        public static function js(string $path): string
         {
             return (self::asset("js/$path"));
         }
@@ -67,7 +67,7 @@
          * 
          * @return string Resulting URL
          */
-        public static function img(string $path) : string
+        public static function img(string $path): string
         {
             return self::asset("img/$path");
         }
@@ -81,9 +81,9 @@
          * 
          * @return string Resulting URL
          */
-        public static function route(string $name, array $params = [], array $get = []) : string
+        public static function route(string $name, array $params = [], array $get = []): string
         {
-            return (\F2P2\Server::baseURL() . \F2P2\Router::getRoute($name)->computeURI($params, $get));
+            return (\f2p2\Server::baseURL() . \f2p2\Router::getRoute($name)->computeURI($params, $get));
         }
 
     }

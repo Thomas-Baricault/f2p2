@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>F2P2</title>
+    <title>f2p2</title>
 </head>
 <body>
     <style>

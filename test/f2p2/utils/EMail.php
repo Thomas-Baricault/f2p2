@@ -1,12 +1,12 @@
 <?php
 
-    namespace F2P2;
+    namespace f2p2;
 
 
     /**
      * Class that can generate and send an email
      */
-    class Email
+    final class Email
     {
 
         /**
@@ -48,7 +48,7 @@
         /**
          * Checks whether an email is syntaxically valid
          */
-        public static function validate(string $email) : bool
+        public static function validate(string $email): bool
         {
             $parts = explode('@', $email);
             return (
@@ -66,7 +66,7 @@
          * 
          * @return Email Reference to this email
          */
-        public function from(string $email, ?string $name = null) : Email
+        public function from(string $email, ?string $name = null): Email
         {
             $this->fromEmail = $email;
             $this->fromName = $name;
@@ -81,7 +81,7 @@
          * 
          * @return Email Reference to this email
          */
-        public function to(string $email, ?string $name = null) : Email
+        public function to(string $email, ?string $name = null): Email
         {
             $this->to[$email] = $name;
             return ($this);
@@ -94,7 +94,7 @@
          * 
          * @return Email Reference to this email
          */
-        public function subject(string $subject) : Email
+        public function subject(string $subject): Email
         {
             $this->subject = $subject;
             return ($this);
@@ -107,7 +107,7 @@
          * 
          * @return Email Reference to this email
          */
-        public function message(string $message) : Email
+        public function message(string $message): Email
         {
             $this->message = $message;
             return ($this);
@@ -121,7 +121,7 @@
          * 
          * @return Email Reference to this email
          */
-        public function header(string $name, string $value) : Email
+        public function header(string $name, string $value): Email
         {
             $this->headers[$name] = $value;
             return ($this);
@@ -132,7 +132,7 @@
          * 
          * @return Email Reference to this email
          */
-        public function enableHTML() : Email
+        public function enableHTML(): Email
         {
             $this->isHTML = true;
             return ($this);
@@ -145,7 +145,7 @@
          * 
          * @throws \Exception If no recipient has been defined
          */
-        public function send() : bool
+        public function send(): bool
         {
             if (count($this->to) === 0)
                 throw new \Exception("Cannot send email with no recipient");

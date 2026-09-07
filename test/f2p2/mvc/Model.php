@@ -1,6 +1,6 @@
 <?php
 
-    namespace F2P2;
+    namespace f2p2;
 
 
     /**
@@ -12,7 +12,7 @@
         /**
          * Table name
          */
-        public const TABLE   = '';
+        public const TABLE = '';
 
         /**
          * Table colums
@@ -35,11 +35,11 @@
          * 
          * @param int $id Entity id
          * 
-         * @return ?object Entity if exists, `null` otherwise
+         * @return ?Model Entity if exists, `null` otherwise
          */
-        public static function findOne(int $id) : ?object
+        public static function findOne(int $id): ?Model
         {
-            $data = (new \F2P2\SelectQuery(get_called_class()::TABLE))
+            $data = (new \f2p2\db\queries\Select(get_called_class()::TABLE))
                 ->where('id = :id')
                 ->execute(['id' => $id]);
             return (
@@ -54,9 +54,9 @@
          * 
          * @return array Entities
          */
-        public static function findAll() : array
+        public static function findAll(): array
         {
-            $data = (new \F2P2\SelectQuery(get_called_class()::TABLE))->execute();
+            $data = (new \f2p2\db\queries\Select(get_called_class()::TABLE))->execute();
             $result = [];
             foreach ($data as $entry)
                 $result[] = new (get_called_class())($entry);
@@ -102,7 +102,7 @@
          * 
          * @return ?int The id
          */
-        public function getId() : ?int
+        public function getId(): ?int
         {
             return ($this->id);
         }
@@ -112,7 +112,7 @@
          * 
          * @return bool `true` if valid, `false` otherwise
          */
-        public function isValid() : bool
+        public function isValid(): bool
         {
             foreach (get_class($this)::COLUMNS as $name => $params)
             {
@@ -130,27 +130,33 @@
          * 
          * @throws \Exception If entity is invalid
          */
-        public function push() : void
+        public function push(): void
         {
             if (!$this->isValid())
                 throw new \Exception("Cannot push invalid element");
             $values = [];
             foreach ($this->data as $column => $value)
-                $values[$column] = get_class($this)::COLUMNS[$column]['type'] === 'SET' ? implode(',', $value) : $value;
+            {
+                $values[$column] = (
+                    get_class($this)::COLUMNS[$column]['type'] === 'SET'
+                        ? implode(',', $value)
+                        : $value
+                );
+            }
             if ($this->id)
             {
                 $update = [];
                 foreach ($this->data as $column => $value)
                     $update[$column] = ":$column";
                 $values['id'] = $this->id;
-                (new \F2P2\UpdateQuery(get_class($this)::TABLE))
+                (new \f2p2\db\queries\Update(get_class($this)::TABLE))
                     ->update($update)
                     ->where('id = :id')
                     ->execute($values);
             }
             else
             {
-                (new \F2P2\InsertQuery(get_class($this)::TABLE))
+                (new \f2p2\db\queries\Insert(get_class($this)::TABLE))
                     ->execute($values);
             }
         }
@@ -162,7 +168,7 @@
          * 
          * @throws \Exception If the entity is undefined
          */
-        public function remove(bool $cascading = false) : void
+        public function remove(bool $cascading = false): void
         {
             if ($this->id === null)
                 throw new \Exception("Cannot remove undefined element from the database");
@@ -177,7 +183,7 @@
                         {
                             if (array_key_exists('reference', $params) && $params['reference'] === $class)
                             {
-                                $data = (new \F2P2\SelectQuery($model::TABLE))
+                                $data = (new \f2p2\db\queries\Select($model::TABLE))
                                     ->where($name.' = :id')
                                     ->execute(['id' => $this->id]);
                                 foreach ($data as $entry)
@@ -187,7 +193,7 @@
                     }
                 }
             }
-            (new \F2P2\DeleteQuery($class::TABLE))
+            (new \f2p2\db\queries\Delete($class::TABLE))
                 ->where('id = :id')
                 ->execute(['id' => $this->id]);
         }

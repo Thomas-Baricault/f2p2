@@ -1,12 +1,12 @@
 <?php
 
-    namespace F2P2;
+    namespace f2p2\db;
 
 
     /**
      * Singleton database interface
      */
-    class Database
+    final class Database
     {
 
         /**
@@ -23,7 +23,7 @@
          * 
          * @return array Query result
          */
-        static public function execute(string $query, array $values) : array
+        static public function execute(string $query, array $values): array
         {
             if (self::$pdo === null)
             {

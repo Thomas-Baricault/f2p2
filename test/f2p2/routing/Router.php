@@ -1,12 +1,12 @@
 <?php
 
-    namespace F2P2;
+    namespace f2p2\routing;
 
 
     /**
      * Class that manages and executes routes
      */
-    class Router
+    final class Router
     {
 
         /**
@@ -20,9 +20,9 @@
          * 
          * @param string $name Route name
          * 
-         * @return ?\F2P2\Route Route if exists, `null` otherwise
+         * @return ?\f2p2\routing\Route Route if exists, `null` otherwise
          */
-        public static function getRoute(string $name) : ?\F2P2\Route
+        public static function getRoute(string $name): ?\f2p2\routing\Route
         {
             if (array_key_exists($name, self::$routes))
                 return (self::$routes[$name]);
@@ -34,7 +34,7 @@
          * 
          * @param array $routes Routes to add (name => route)
          */
-        public static function addRoutes(array $routes) : void
+        public static function addRoutes(array $routes): void
         {
             self::$routes = array_merge(self::$routes, $routes);
         }
@@ -45,7 +45,7 @@
          * @param string $name Name of the route
          * @param array $route Route to add
          */
-        public static function addRoute(string $name, array $route) : void
+        public static function addRoute(string $name, array $route): void
         {
             self::$routes[$name] = $route;
         }
@@ -53,9 +53,9 @@
         /**
          * Runs the router for a request
          * 
-         * @param \F2P2\Request $request Request to run
+         * @param \f2p2\requests\Request $request Request to run
          */
-        public static function run(\F2P2\Request $request) : void
+        public static function run(\f2p2\requests\Request $request): void
         {
             $status = 404;
             foreach (self::$routes as $route)
@@ -66,7 +66,7 @@
                     if (array_key_exists($status, self::$routes))
                         self::$routes[$status]->call($request, ['status' => $status]);
                     else
-                        (new \F2P2\ErrorResponse($status))->send();
+                        (new \f2p2\responses\Error($status))->send();
                 }
             }
         }

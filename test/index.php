@@ -6,9 +6,9 @@
     require_once('f2p2/autoload.php');
 
 
-    \F2P2\Language::init();
+    \f2p2\Language::init();
 
-    \F2P2\Router::addRoutes(require_once('config/routes.php'));
-    \F2P2\Router::run(\F2P2\Request::current());
+    \f2p2\Router::addRoutes(require_once('config/routes.php'));
+    \f2p2\Router::run(\f2p2\Request::current());
 
 ?>

@@ -1,6 +1,6 @@
 <?php
 
-    namespace F2P2;
+    namespace f2p2;
 
 
     /**
@@ -8,6 +8,7 @@
      */
     abstract class Controller
     {
+
     }
 
 ?>

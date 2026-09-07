@@ -1,4 +1,5 @@
 better where clause
 sql joins
 auto-determine language
-namespaces (needed for response and queries)
+input checkbox/radio
+rework request and response

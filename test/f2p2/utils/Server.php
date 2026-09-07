@@ -1,12 +1,12 @@
 <?php
 
-    namespace F2P2;
+    namespace f2p2;
 
 
     /**
      * Class that represent the actual state of the server
      */
-    class Server
+    final class Server
     {
 
         /**
@@ -14,7 +14,7 @@
          * 
          * @return string Base URL
          */
-        public static function baseURL() : string
+        public static function baseURL(): string
         {
             return ($_SERVER['REQUEST_SCHEME'].'://'.$_SERVER['SERVER_NAME']);
         }
@@ -24,7 +24,7 @@
          * 
          * @return string Request URI
          */
-        public static function currentURI() : string
+        public static function currentURI(): string
         {
             return ($_SERVER['PATH_INFO'] ?? '/');
         }
@@ -34,7 +34,7 @@
          * 
          * @return string Request URL
          */
-        public static function currentURL() : string
+        public static function currentURL(): string
         {
             return (self::baseURL() . self::currentURI());
         }
@@ -44,7 +44,7 @@
          * 
          * @return string Request method
          */
-        public static function requestMethod() : string
+        public static function requestMethod(): string
         {
             return ($_SERVER['REQUEST_METHOD']);
         }
@@ -54,7 +54,7 @@
          * 
          * @return int Request port
          */
-        public static function serverPort() : int
+        public static function serverPort(): int
         {
             return ($_SERVER['SERVER_PORT']);
         }

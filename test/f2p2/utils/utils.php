@@ -1,13 +1,7 @@
 <?php
-    namespace F2P2;
+    namespace f2p2;
 
-
-    const REGEX_DATE          = '/(19|20)\d\d-(0[1-9]|1[012])-([012]\d|3[01])/';
-    const REGEX_DATETIMELOCAL = '/(19|20)\d\d-(0[1-9]|1[012])-([012]\d|3[01])T([01]\d|2[0-3]):([0-5]\d)/';
-    const REGEX_TIME          = '/([01]\d|2[0-3]):([0-5]\d)/';
-    const REGEX_MONTH         = '/(19|20)\d\d-(0[1-9]|1[012])/';
-    const REGEX_WEEK          = '/(19|20)\d\d-W([0-4]\d)|(5[0123])/';
-
+use DateTimeImmutable;
 
     /**
      * Read the JSON of a file
@@ -57,5 +51,11 @@
     {
         $data = readJSON('config/mime.json');
         return array_key_exists($mime, $data) ? (is_array($data[$mime]) ? $data[$mime][0] : $data[$mime]) : null;
+    }
+
+    function validateDate(string $value, string $format)
+    {
+        $date = DateTimeImmutable::createFromFormat('!' . $format, $value);
+        return ($date !== false && $date->format($format) === $value);
     }
 ?>

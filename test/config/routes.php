@@ -1,7 +1,7 @@
 <?php
 
     return [
-        "welcome" => (new \F2P2\Route())
+        "welcome" => (new \f2p2\routing\Route())
             ->uri('/')
             ->method("GET")
             ->action('Welcome', 'index'),
