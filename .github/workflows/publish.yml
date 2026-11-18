@@ -12,17 +12,17 @@ jobs:
   publish:
     runs-on: ubuntu-latest
 
-  steps:
-    - uses: actions/checkout@v4
+    steps:
+      - uses: actions/checkout@v4
 
-    - name: Create ZIP
-      run: zip -r skeleton.zip skeleton
+      - name: Create ZIP
+        run: zip -r skeleton.zip skeleton
 
-    - name: Publish Release
-      env:
-        GH_TOKEN: ${{ github.token }}
-      run: |
-        gh release create \
-          "${GITHUB_REF_NAME}" \
-          skeleton.zip \
-          --title "${GITHUB_REF_NAME}"
+      - name: Publish Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create \
+            "${GITHUB_REF_NAME}" \
+            skeleton.zip \
+            --title "${GITHUB_REF_NAME}"
