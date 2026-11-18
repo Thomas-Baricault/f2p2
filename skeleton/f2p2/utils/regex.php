@@ -1,0 +1,25 @@
+<?php
+
+/*
+ * Copyright (c) 2026-present Thomas Baricault
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+
+namespace f2p2\regex;
+
+
+const COLOR = '/^#[0-9A-Fa-f]{6}$/';
+
+const DATE = '/^(19|20)\d\d-(0[1-9]|1[012])-([012]\d|3[01])$/';
+
+const DATETIME_LOCAL = '/^(19|20)\d\d-(0[1-9]|1[012])-([012]\d|3[01])T([01]\d|2[0-3]):([0-5]\d)$/';
+
+const EMAIL = '/^[A-Za-z0-9.!#$%&\'*+\/=?^_`{|}~-]+@[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\.[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)+$/';
+
+const MONTH = '/^(19|20)\d\d-(0[1-9]|1[012])$/';
+
+const TIME = '/^([01]\d|2[0-3]):([0-5]\d)$/';
+
+const WEEK = '/^(19|20)\d\d-W([0-4]\d)|(5[0123])$/';
