@@ -41,6 +41,10 @@ Read the complete documentation at [https://docs.thomas-baricault.fr/f2p2](https
 
 - Authentication
 - Cookies
+- Response code as enum
+- SQL references
+- SQL joins
+- DDL / DCL queries
 - CLI
 
 ## License
